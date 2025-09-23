@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<title>Dashboard -FriendBook</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}" />
+	<script th:src="@{/js/script.js}"></script>
+</head>
+
+<body>
+	<div class="dashboard-container">
+		<h2>Welcome, <span th:text="${user.name}"></span>!</h2>
+		<p>Email: <span th:text="${user.email}"></span></p>
+
+		<div class="profile-section">
+			<h3>Your Profile Picture</h3>
+
+			<div>
+				<img th:if="${user.profilePicture != null}" th:src="@{'/user/profile-picture/' + ${user.id}}"
+					alt="Profile Picture" class="profile-pic">
+
+				<p th:if="${user.profilePicture == null}">No profile picture uploaded.</p>
+			</div>
+
+			<form th:action="@{/user/upload-profile}" method="post" enctype="multipart/form-data">
+				<input type="hidden" name="email" th:value="${user.email}">
+				<input type="file" name="file" accept="image/*" required>
+				<button type="submit">Upload / Update</button>
+			</form>
+		</div>
+	</div>
+</body>
+
+</html>
