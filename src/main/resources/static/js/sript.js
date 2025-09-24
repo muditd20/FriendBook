@@ -36,3 +36,24 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+    const fileInputs = document.querySelectorAll("input[type='file']");
+    fileInputs.forEach(input => {
+        input.addEventListener("change", (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    let preview = input.nextElementSibling;
+                    if (!preview || preview.tagName !== "IMG") {
+                        preview = document.createElement("img");
+                        preview.classList.add("post-img");
+                        input.insertAdjacentElement("afterend", preview);
+                    }
+                    preview.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    });
+});

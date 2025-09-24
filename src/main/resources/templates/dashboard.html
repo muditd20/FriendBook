@@ -10,15 +10,13 @@
 
 <body>
 	<div class="dashboard-container">
+
 		<!-- Profile Section -->
 		<div class="profile-header">
 			<div class="profile-pic-container">
 				<img th:if="${user.profilePhoto != null}" th:src="@{'/uploads/' + ${user.profilePhoto}}"
 					alt="Profile Photo" class="profile-pic" />
-
-				<p th:if="${user.profilePhoto == null}" class="no-photo">
-					No profile photo uploaded.
-				</p>
+				<p th:if="${user.profilePhoto == null}" class="no-photo">No profile photo uploaded.</p>
 			</div>
 
 			<div class="profile-info">
@@ -35,6 +33,51 @@
 				<p th:if="${message != null}" th:text="${message}" class="success"></p>
 			</div>
 		</div>
+
+		<hr />
+
+		<!-- Create Post -->
+		<div class="create-post-card">
+			<h3>Create a Post</h3>
+			<form th:action="@{/posts/create}" method="post" enctype="multipart/form-data" class="create-post-form">
+				<input type="hidden" name="email" th:value="${user.email}" />
+
+				<textarea name="caption" placeholder="What's on your mind?" required></textarea>
+
+				<div class="upload-section">
+					<label for="imageUpload" class="upload-label">📷 Add Photo</label>
+					<input id="imageUpload" type="file" name="image" accept="image/*" required hidden />
+				</div>
+
+				<button type="submit" class="btn-post">Post</button>
+			</form>
+		</div>
+
+		<hr />
+
+		<!-- User Posts -->
+		<!-- User Posts -->
+		<h3>Your Posts</h3>
+		<div class="posts">
+			<div th:each="post : ${posts}" class="post-card">
+				<div class="post-header">
+					<img th:if="${user.profilePhoto != null}" th:src="@{'/uploads/' + ${user.profilePhoto}}"
+						alt="Profile Photo" class="post-user-pic" />
+					<div class="post-user-info">
+						<h4 th:text="${user.name}"></h4>
+						<p class="post-date">
+							<i th:text="${#temporals.format(post.createdAt, 'dd-MM-yyyy HH:mm')}"></i>
+						</p>
+					</div>
+				</div>
+
+				<p class="post-caption" th:text="${post.caption}"></p>
+
+				<img th:if="${post.imagePath != null}" th:src="@{'/uploads/' + ${post.imagePath}}" alt="Post Image"
+					class="post-img" />
+			</div>
+		</div>
+
 	</div>
 </body>
 

@@ -17,6 +17,7 @@ public class SecurityConfig {
 	            .requestMatchers("/css/**", "/js/**", "/images/**", "/uploads/**", "/auth/**", "/h2-console/**")
 	            .permitAll()
 	            .requestMatchers("/user/**").permitAll()
+	            .requestMatchers("/posts/**").permitAll()
 	            .anyRequest().authenticated()
 	        )
 	        .logout(logout -> logout.permitAll())
