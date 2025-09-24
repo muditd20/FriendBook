@@ -1,66 +1,74 @@
 package com.friendbook.controller;
 
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.UUID;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.friendbook.model.User;
-import com.friendbook.repository.UserRepository;
 import com.friendbook.service.UserService;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/user")
 public class UserController {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-	private UserService userService;
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
-    
-	public UserController(UserRepository userRepository, UserService userService) {
-		this.userRepository = userRepository;
-		this.userService = userService;
-	}
+    // 🟢 Dashboard
+    @GetMapping("/dashboard")
+    public String dashboard(@RequestParam("email") String email, Model model) {
+        User user = userService.findByEmail(email);
+        model.addAttribute("user", user);
+        return "dashboard";
+    }
 
-	@GetMapping("/dashboard")
-	public String dashboard(@RequestParam("email") String email, Model model) {
-		User user = userService.findByEmail(email);
-		model.addAttribute("user", user);
-		return "dashboard";
-	}
+    // 🟢 Upload Profile Photo
+    @PostMapping("/uploadPhoto")
+    public String uploadPhoto(@RequestParam("photo") MultipartFile file,
+                              @RequestParam("email") String email,
+                              Model model) {
+        try {
+            User user = userService.findByEmail(email);
+            if (user == null) {
+                model.addAttribute("uploadError", "User not found!");
+                return "dashboard";
+            }
 
-	@PostMapping("/upload-profile")
-	public String uploadProfile(@RequestParam("file") MultipartFile file, @RequestParam("email") String email) throws Exception
-	{
-			User user = userService.findByEmail(email);
-			if(user !=null && !file.isEmpty())
-			{
-				user.setProfilePicture(file.getBytes());
-				userService.save(user);
-			}
-			return "redirect:/user/dashboard?email=" + email;
-	}
-	
-	@GetMapping("/profile-picture/{id}")
-	public ResponseEntity<byte[]> getProfilePicture(@PathVariable Long id)
-	{
-		User user = userService.findById(id);
-		byte[] image = user.getProfilePicture();
-		if(image !=null)
-		{
-			return ResponseEntity.ok()
-					.contentType(MediaType.ALL)
-					.body(image);
-		}
-		
-		return ResponseEntity.notFound().build();
-	}
+            // ✅ uploads folder (static) ka absolute path
+            String uploadDir = new File("src/main/resources/static/uploads").getAbsolutePath();
+            File uploadFolder = new File(uploadDir);
+            if (!uploadFolder.exists()) {
+                uploadFolder.mkdirs();
+            }
 
-	
+            // ✅ unique filename
+            String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+            Path filePath = Paths.get(uploadDir, fileName);
+
+            // ✅ save file
+            file.transferTo(filePath.toFile());
+
+            // ✅ update user in DB
+            user.setProfilePhoto(fileName);
+            userService.save(user);
+
+            model.addAttribute("message", "File uploaded successfully!");
+            model.addAttribute("user", user);
+
+        } catch (Exception e) {
+            model.addAttribute("uploadError", "File upload failed: " + e.getMessage());
+        }
+        return "dashboard";
+    }
 }

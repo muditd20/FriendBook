@@ -1,80 +1,163 @@
 body {
-    font-family: Arial, sans-serif;
-    background: #f3f4f6;
-    margin: 0;
-    padding: 0;
+	font-family: Arial, sans-serif;
+	background: #f3f4f6;
+	margin: 0;
+	padding: 0;
 }
 
-.form-container, .welcome-container {
-    width: 350px;
-    margin: 60px auto;
-    padding: 20px;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    text-align: center;
+.form-container,
+.welcome-container {
+	width: 350px;
+	margin: 60px auto;
+	padding: 20px;
+	background: #fff;
+	border-radius: 12px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	text-align: center;
 }
 
 h2 {
-    margin-bottom: 20px;
-    color: #333;
+	margin-bottom: 20px;
+	color: #333;
 }
 
 .form-group {
-    margin-bottom: 15px;
-    text-align: left;
+	margin-bottom: 15px;
+	text-align: left;
 }
 
 label {
-    display: block;
-    font-size: 14px;
-    margin-bottom: 5px;
-    color: #444;
+	display: block;
+	font-size: 14px;
+	margin-bottom: 5px;
+	color: #444;
 }
 
-input[type="text"], input[type="email"], input[type="password"] {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-sizing: border-box;
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+	width: 100%;
+	padding: 10px;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	box-sizing: border-box;
 }
 
-button, .btn {
-    background-color: #2563eb;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-    text-decoration: none;
-    display: inline-block;
+button,
+.btn {
+	background-color: #2563eb;
+	color: white;
+	padding: 10px 20px;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	font-size: 14px;
+	text-decoration: none;
+	display: inline-block;
 }
 
-button:hover, .btn:hover {
-    background-color: #1d4ed8;
+button:hover,
+.btn:hover {
+	background-color: #1d4ed8;
 }
 
 .error {
-    color: #e11d48;
-    font-size: 13px;
+	color: #e11d48;
+	font-size: 13px;
 }
 
 .success {
-    color: #16a34a;
-    font-size: 13px;
+	color: #16a34a;
+	font-size: 13px;
 }
 
-.profile-section{
+.profile-section {
 	margin-top: 20px;
 	text-align: center;
 }
 
 .profile-pic {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    border: 3px solid #555;
-    margin-bottom: 10px;
+	width: 180px;
+	height: 180px;
+	object-fit: cover;
+	border-radius: 50%;
+	border: 3px solid #dbdbdb;
+}
+
+.dashboard-container {
+	max-width: 800px;
+	margin: 50px auto;
+	background: #fff;
+	padding: 30px;
+	border-radius: 12px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.profile-header {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 40px;
+}
+
+.profile-pic-container {
+	flex-shrink: 0;
+}
+
+.no-photo {
+	width: 180px;
+	height: 180px;
+	border-radius: 50%;
+	background: #e5e5e5;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #666;
+	font-size: 14px;
+}
+
+.profile-info {
+	flex: 1;
+}
+
+.profile-info h2 {
+	margin: 0;
+	font-size: 26px;
+	color: #262626;
+}
+
+.profile-info p {
+	color: #555;
+	margin: 5px 0 15px;
+}
+
+/* Buttons */
+.btn,
+button {
+	background: #0095f6;
+	color: #fff;
+	padding: 8px 18px;
+	border: none;
+	border-radius: 6px;
+	cursor: pointer;
+	font-weight: bold;
+	font-size: 14px;
+}
+
+.btn:hover,
+button:hover {
+	background: #0078c2;
+}
+
+/* Messages */
+.error {
+	color: #e11d48;
+	margin-top: 8px;
+	font-size: 13px;
+}
+
+.success {
+	color: #16a34a;
+	margin-top: 8px;
+	font-size: 13px;
 }

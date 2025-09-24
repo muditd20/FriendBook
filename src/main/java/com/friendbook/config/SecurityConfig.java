@@ -12,19 +12,17 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.csrf(csrf -> csrf.disable())
-				.authorizeHttpRequests(
-						auth -> auth.requestMatchers("/css/**", "/js/**", "/images/**", "/auth/**", "/h2-console/**")
-								.permitAll().requestMatchers("/user/**").permitAll().anyRequest().authenticated())
-				// ❌ remove this .formLogin(...) block completely
-				// .formLogin(form -> form
-				// .loginPage("/auth/login")
-				// .permitAll()
-				// )
-				.logout(logout -> logout.permitAll())
-				.headers(headers -> headers.frameOptions(frame -> frame.sameOrigin())); // H2 console
+	    http.csrf(csrf -> csrf.disable())
+	        .authorizeHttpRequests(auth -> auth
+	            .requestMatchers("/css/**", "/js/**", "/images/**", "/uploads/**", "/auth/**", "/h2-console/**")
+	            .permitAll()
+	            .requestMatchers("/user/**").permitAll()
+	            .anyRequest().authenticated()
+	        )
+	        .logout(logout -> logout.permitAll())
+	        .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
 
-		return http.build();
+	    return http.build();
 	}
 
 	@Bean

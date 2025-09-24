@@ -17,8 +17,8 @@ public class User {
 
     private String name;
 
-    @Lob
-    private byte[] profilePicture;
+    // 🟢 new column for profile photo filename
+    private String profilePhoto;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -32,6 +32,6 @@ public class User {
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
-    public byte[] getProfilePicture() { return profilePicture; }
-    public void setProfilePicture(byte[] profilePicture) { this.profilePicture = profilePicture; }
+    public String getProfilePhoto() { return profilePhoto; }
+    public void setProfilePhoto(String profilePhoto) { this.profilePhoto = profilePhoto; }
 }
