@@ -10,24 +10,30 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
-	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-	    http.csrf(csrf -> csrf.disable())
-	        .authorizeHttpRequests(auth -> auth
-	            .requestMatchers("/css/**", "/js/**", "/images/**", "/uploads/**", "/auth/**", "/h2-console/**")
-	            .permitAll()
-	            .requestMatchers("/user/**").permitAll()
-	            .requestMatchers("/posts/**").permitAll()
-	            .anyRequest().authenticated()
-	        )
-	        .logout(logout -> logout.permitAll())
-	        .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth
+                // Public pages
+                .requestMatchers("/", "/index", "/css/**", "/js/**", "/images/**", "/uploads/**", "/auth/**", "/h2-console/**")
+                .permitAll()
 
-	    return http.build();
-	}
+                // Allow user & posts publicly (if needed)
+                .requestMatchers("/user/**", "/posts/**","/likes/**")
+                .permitAll()
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+                // Everything else requires authentication
+                .anyRequest().authenticated()
+            )
+            .logout(logout -> logout.permitAll())
+            .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
+
+        return http.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }

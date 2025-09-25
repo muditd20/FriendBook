@@ -16,36 +16,45 @@ import java.util.UUID;
 
 @Service
 public class PostService {
-	
-    private final PostRepository postRepository;
 
-    public PostService(PostRepository postRepository) {
-        this.postRepository = postRepository;
-    }
+	private final PostRepository postRepository;
 
-    public Post createPost(User user, String caption, MultipartFile imageFile) {
-        try {
-            String uploadDir = new File("src/main/resources/static/uploads/posts").getAbsolutePath();
-            File folder = new File(uploadDir);
-            if (!folder.exists()) folder.mkdirs();
+	public PostService(PostRepository postRepository) {
+		this.postRepository = postRepository;
+	}
 
-            String fileName = UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
-            Path filePath = Paths.get(uploadDir, fileName);
-            imageFile.transferTo(filePath.toFile());
+	public Post createPost(User user, String caption, MultipartFile imageFile) {
+		try {
+			String uploadDir = new File("src/main/resources/static/uploads/posts").getAbsolutePath();
+			File folder = new File(uploadDir);
+			if (!folder.exists())
+				folder.mkdirs();
 
-            Post post = new Post();
-            post.setCaption(caption);
-            post.setImagePath("posts/" + fileName);
-            post.setUser(user);
-            post.setCreatedAt(LocalDateTime.now());
+			String fileName = UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
+			Path filePath = Paths.get(uploadDir, fileName);
+			imageFile.transferTo(filePath.toFile());
 
-            return postRepository.save(post);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to create post: " + e.getMessage());
-        }
-    }
+			Post post = new Post();
+			post.setCaption(caption);
+			post.setImagePath("posts/" + fileName);
+			post.setUser(user);
+			post.setCreatedAt(LocalDateTime.now());
 
-    public List<Post> getUserPosts(User user) {
-        return postRepository.findByUserOrderByCreatedAtDesc(user);
-    }
+			return postRepository.save(post);
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to create post: " + e.getMessage());
+		}
+	}
+
+	public List<Post> getUserPosts(User user) {
+		return postRepository.findByUserOrderByCreatedAtDesc(user);
+	}
+
+	public void deletePost(Long postId) {
+		postRepository.deleteById(postId);
+	}
+
+	public Post findById(Long id) {
+		return postRepository.findById(id).orElse(null);
+	}
 }

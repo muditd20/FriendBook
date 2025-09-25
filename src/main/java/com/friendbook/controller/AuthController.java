@@ -20,81 +20,77 @@ import java.nio.charset.StandardCharsets;
 @RequestMapping("/auth")
 public class AuthController {
 
-    @Autowired
-    private UserService userService;
+	@Autowired
+	private UserService userService;
 
-    @Autowired
-    private CaptchaValidator captchaValidator;
+	@Autowired
+	private CaptchaValidator captchaValidator;
 
-    // show register page
-    @GetMapping("/register")
-    public String registerForm(Model model) {
-        model.addAttribute("registerRequest", new RegisterRequest());
-        return "register"; // resolves to templates/register.html
-    }
+	// show register page
+	@GetMapping("/register")
+	public String registerForm(Model model) {
+		model.addAttribute("registerRequest", new RegisterRequest());
+		return "register";
+	}
 
-    // handle register form submit
-    @PostMapping("/register")
-    public String registerSubmit(@Valid @ModelAttribute("registerRequest") RegisterRequest request,
-                                 BindingResult bindingResult,
-                                 @RequestParam("g-recaptcha-response") String captchaResponse,
-                                 Model model) {
+	@PostMapping("/register")
+	public String registerSubmit(@Valid @ModelAttribute("registerRequest") RegisterRequest request,
+			BindingResult bindingResult, @RequestParam("g-recaptcha-response") String captchaResponse, Model model) {
 
-        if (bindingResult.hasErrors()) {
-            return "register";
-        }
+		if (bindingResult.hasErrors()) {
+			return "register";
+		}
 
-        // validate captcha
-        if (!captchaValidator.validateCaptcha(captchaResponse)) {
-            model.addAttribute("captchaError", "Captcha validation failed!");
-            return "register";
-        }
+		if (!captchaValidator.validateCaptcha(captchaResponse)) {
+			model.addAttribute("captchaError", "Captcha validation failed!");
+			return "register";
+		}
 
-        try {
-            userService.register(request);
-        } catch (RuntimeException ex) {
-            model.addAttribute("registrationError", ex.getMessage());
-            return "register";
-        }
+		try {
+			userService.register(request);
+		} catch (RuntimeException ex) {
+			model.addAttribute("registrationError", ex.getMessage());
+			return "register";
+		}
 
-        // redirect to login with success message
-        return "redirect:/auth/login?registered";
-    }
+		return "redirect:/auth/login?registered";
+	}
 
-    // show login page
-    @GetMapping("/login")
-    public String loginForm(Model model,
-                            @RequestParam(value = "registered", required = false) String registered) {
-        model.addAttribute("loginRequest", new LoginRequest());
-        if (registered != null) {
-            model.addAttribute("message", "Registration successful. Please login.");
-        }
-        return "login"; // templates/login.html
-    }
+	@GetMapping("/login")
+	public String loginForm(Model model, @RequestParam(value = "registered", required = false) String registered) {
+		model.addAttribute("loginRequest", new LoginRequest());
+		if (registered != null) {
+			model.addAttribute("message", "Registration successful. Please login.");
+		}
+		return "login"; // templates/login.html
+	}
 
-    // login submit (manual authentication)
-    @PostMapping("/login")
-    public String loginSubmit(@Valid @ModelAttribute("loginRequest") LoginRequest request,
-                              BindingResult bindingResult,
-                              Model model,
-                              HttpSession session) {
-        if (bindingResult.hasErrors()) {
-            return "login";
-        }
+	// login submit (manual authentication)
+	@PostMapping("/login")
+	public String loginSubmit(@Valid @ModelAttribute("loginRequest") LoginRequest request, BindingResult bindingResult,
+			Model model, HttpSession session) {
+		if (bindingResult.hasErrors()) {
+			return "login";
+		}
 
-        try {
-            User user = userService.login(request);
+		try {
+			User user = userService.login(request);
 
-            // store something in session for later pages (optional but useful)
-            session.setAttribute("loggedInUser", user.getEmail());
+			// store something in session for later pages (optional but useful)
+			session.setAttribute("loggedInUser", user.getEmail());
 
-            // redirect to dashboard including email param (dashboard expects it)
-            String encodedEmail = URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8);
-            return "redirect:/user/dashboard?email=" + encodedEmail;
+			// redirect to dashboard including email param (dashboard expects it)
+			String encodedEmail = URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8);
+			return "redirect:/user/dashboard?email=" + encodedEmail;
 
-        } catch (RuntimeException ex) {
-            model.addAttribute("loginError", ex.getMessage());
-            return "login";
-        }
-    }
+		} catch (RuntimeException ex) {
+			model.addAttribute("loginError", ex.getMessage());
+			return "login";
+		}
+	}
+
+	@GetMapping("/")
+	public String home() {
+		return "index";
+	}
 }

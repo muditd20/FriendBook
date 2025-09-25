@@ -30,10 +30,17 @@ public class PostController {
 		{
 			return "redirect:/auth/login";
 		}
-		
 		postService.createPost(user, caption, image);
 		
 		return "redirect:/user/dashboard?email=" + email;
+	}
+	
+	@PostMapping("/delete")
+	public String deletePost(@RequestParam("postId") Long postId, @RequestParam("email")String email)
+	{
+		postService.deletePost(postId);
+		return "redirect:/user/dashboard?email=" + email;
+		
 	}
 
 }

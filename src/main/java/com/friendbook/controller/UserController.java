@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.friendbook.model.Post;
 import com.friendbook.model.User;
+import com.friendbook.service.LikeService;
 import com.friendbook.service.PostService;
 import com.friendbook.service.UserService;
 
@@ -22,13 +23,14 @@ public class UserController {
 
 	private final UserService userService;
 	private final PostService postService;
+	private final LikeService likeService;
 
-	public UserController(UserService userService, PostService postService) {
+	public UserController(UserService userService, PostService postService,LikeService likeService) {
 		this.userService = userService;
 		this.postService = postService;
+		this.likeService=likeService;
 	}
 
-	// 🟢 Dashboard
 	@GetMapping("/dashboard")
 	public String dashboard(@RequestParam("email") String email, Model model) {
 		User user = userService.findByEmail(email);
@@ -36,16 +38,15 @@ public class UserController {
 			return "redirect:/auth/login";
 		}
 
-		// ✅ yahan posts list lekar model me bhejni hai
 		List<Post> posts = postService.getUserPosts(user);
 
 		model.addAttribute("user", user);
 		model.addAttribute("posts", posts); // 🟢 attribute ka naam fix kiya
+	    model.addAttribute("likeService", likeService); // so Thymeleaf can call countLikes
 
 		return "dashboard";
 	}
 
-	// 🟢 Upload Profile Photo
 	@PostMapping("/uploadPhoto")
 	public String uploadPhoto(@RequestParam("photo") MultipartFile file, @RequestParam("email") String email,
 			Model model) {
@@ -56,21 +57,17 @@ public class UserController {
 				return "dashboard";
 			}
 
-			// ✅ uploads folder (static) ka absolute path
 			String uploadDir = new File("src/main/resources/static/uploads").getAbsolutePath();
 			File uploadFolder = new File(uploadDir);
 			if (!uploadFolder.exists()) {
 				uploadFolder.mkdirs();
 			}
 
-			// ✅ unique filename
 			String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
 			Path filePath = Paths.get(uploadDir, fileName);
 
-			// ✅ save file
 			file.transferTo(filePath.toFile());
 
-			// ✅ update user in DB
 			user.setProfilePhoto(fileName);
 			userService.save(user);
 
