@@ -1,6 +1,7 @@
 package com.friendbook.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,26 +22,33 @@ public class PostController {
 		this.postService = postService;
 		this.userService = userService;
 	}
-	
+
 	@PostMapping("/create")
-	public String createPost(@RequestParam("email") String email,@RequestParam("caption") String caption,@RequestParam("image") MultipartFile image)
-	{
+	public String createPost(@RequestParam("email") String email, @RequestParam("caption") String caption,
+			@RequestParam("image") MultipartFile image) {
 		User user = userService.findByEmail(email);
-		if(user==null)
-		{
+		if (user == null) {
 			return "redirect:/auth/login";
 		}
 		postService.createPost(user, caption, image);
-		
+
 		return "redirect:/user/dashboard?email=" + email;
 	}
-	
+
 	@PostMapping("/delete")
-	public String deletePost(@RequestParam("postId") Long postId, @RequestParam("email")String email)
-	{
+	public String deletePost(@RequestParam("postId") Long postId, @RequestParam("email") String email) {
 		postService.deletePost(postId);
 		return "redirect:/user/dashboard?email=" + email;
-		
+
+	}
+
+	@PostMapping("/update")
+	public String updatePost(@RequestParam("postId") Long postId,
+	                         @RequestParam("email") String email,
+	                         @RequestParam("caption") String caption,
+	                         @RequestParam(value = "image", required = false) MultipartFile image) {
+	    postService.updatePost(postId, caption, image);
+	    return "redirect:/user/dashboard?email=" + email;
 	}
 
 }

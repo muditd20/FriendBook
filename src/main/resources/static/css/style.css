@@ -149,6 +149,7 @@ button:hover {
 	background: #0078c2;
 }
 
+
 /* Messages */
 .error {
 	color: #e11d48;
@@ -233,7 +234,6 @@ button:hover {
     background: #45a049;
     transform: translateY(-1px);
 }
-/* Posts Section - Compact */
 /* Posts Section - Compact */
 .posts {
     margin-top: 20px;
@@ -324,7 +324,7 @@ button:hover {
     z-index: 10;
 }
 
-.dropdown-menu .delete-btn {
+.dropdown-menu .delete-btn,.update-btn {
     background: none;
     border: none;
     padding: 8px 14px;

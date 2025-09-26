@@ -51,10 +51,41 @@ public class PostService {
 	}
 
 	public void deletePost(Long postId) {
-		postRepository.deleteById(postId);	
+		postRepository.deleteById(postId);
 	}
 
 	public Post findById(Long id) {
 		return postRepository.findById(id).orElse(null);
+	}
+
+	public Post updatePost(Long postId,String caption,MultipartFile imageFile)
+	{
+		Post post=findById(postId);
+		if(post==null)
+		{
+			throw new RuntimeException("Post not Found");
+		}
+		
+		post.setCaption(caption);
+		
+		try {
+			if(imageFile != null && !imageFile.isEmpty())
+			{
+                String uploadDir = new File("src/main/resources/static/uploads/posts").getAbsolutePath();
+                	File folder = new File(uploadDir);
+                	if(!folder.exists())
+                		folder.mkdir();
+                	
+                    String fileName = UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
+                    Path filePath = Paths.get(uploadDir, fileName);
+                    imageFile.transferTo(filePath.toFile());
+                    
+                    post.setImagePath("posts/"+fileName);
+			}
+		}catch (Exception e) {
+			// TODO: handle exception
+			throw new RuntimeException("Failed to update post: " + e.getMessage());
+		}
+		return postRepository.save(post);
 	}
 }

@@ -63,3 +63,8 @@ function ConfrimDelete()
 	return confirm("Are you sure you want to delete your post?");
 }
 
+function ConfirmUpdate()
+{
+	return confirm("Are you sure to update your post?");
+}
+
