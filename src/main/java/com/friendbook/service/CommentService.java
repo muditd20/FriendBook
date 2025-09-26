@@ -18,22 +18,18 @@ public class CommentService {
 	public CommentService(CommentRepository commentRepository) {
 		this.commentRepository = commentRepository;
 	}
-	
-	public Comment addComment(User user,Post post,String text)
-	{
+
+	public Comment addComment(User user, Post post, String text) {
 		Comment comment = new Comment();
-//		comment.setUser(user);
-//		comment.setPost(post);
-//		comment.setText(text);
-//		comment.setCreatedAt(LocalDateTime.now());
+		comment.setUser(user);
+		comment.setPost(post);
+		comment.setText(text);
+		comment.setCreatedAt(LocalDateTime.now());
 		return commentRepository.save(comment);
 	}
-	
-	
-	public List<Comment> getComments(Post post)
-	{
+
+	public List<Comment> getComments(Post post) {
 		return commentRepository.findByPostOrderByCreatedAt(post);
 	}
-	
 
 }

@@ -20,7 +20,7 @@ public class SecurityConfig {
                 .permitAll()
 
                 // Allow user & posts publicly (if needed)
-                .requestMatchers("/user/**", "/posts/**","/likes/**")
+                .requestMatchers("/user/**", "/posts/**","/likes/**","/comments/**")
                 .permitAll()
 
                 // Everything else requires authentication
