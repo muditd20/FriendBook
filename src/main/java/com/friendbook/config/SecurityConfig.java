@@ -20,11 +20,11 @@ public class SecurityConfig {
                 .permitAll()
 
                 // Allow user & posts publicly (if needed)
-                .requestMatchers("/user/**", "/posts/**","/likes/**","/comments/**")
+                .requestMatchers("/user/**", "/posts/**","/likes/**","/comments/**","/notifications/**")
                 .permitAll()
 
                 // Everything else requires authentication
-                .anyRequest().authenticated()	
+                .anyRequest().permitAll()
             )
             .logout(logout -> logout.permitAll())
             .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
