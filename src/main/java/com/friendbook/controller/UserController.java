@@ -28,14 +28,14 @@ public class UserController {
 	private final LikeService likeService;
 	private final CommentService commentService;
 	private final FollowService followService;
-	
 
-	public UserController(UserService userService, PostService postService, LikeService likeService,CommentService commentService,FollowService followService) {
+	public UserController(UserService userService, PostService postService, LikeService likeService,
+			CommentService commentService, FollowService followService) {
 		this.userService = userService;
 		this.postService = postService;
 		this.likeService = likeService;
-		this.commentService=commentService;
-		this.followService=followService;
+		this.commentService = commentService;
+		this.followService = followService;
 	}
 
 	@GetMapping("/dashboard")
@@ -51,15 +51,15 @@ public class UserController {
 		model.addAttribute("posts", posts); // 🟢 attribute ka naam fix kiya
 		model.addAttribute("likeService", likeService); // so Thymeleaf can call countLikes
 		model.addAttribute("commentService", commentService);
-		
+
 		model.addAttribute("followersCount", followService.countFollowers(user));
 		model.addAttribute("followingCount", followService.countFollowing(user));
-		   User target = userService.findById(2L); 
-		    if (target != null) {
-		        boolean isFollowing = followService.isFollowing(user, target);
-		        model.addAttribute("target", target);
-		        model.addAttribute("isFollowing", isFollowing);
-		    }
+		User target = userService.findById(2L);
+		if (target != null) {
+			boolean isFollowing = followService.isFollowing(user, target);
+			model.addAttribute("target", target);
+			model.addAttribute("isFollowing", isFollowing);
+		}
 		return "dashboard";
 	}
 
@@ -96,7 +96,39 @@ public class UserController {
 		}
 		return "dashboard";
 	}
-	
-	
-	
+
+	@GetMapping("/search")
+	public String searchPage(@RequestParam(value = "keyword", required = false) String keyword,
+			@RequestParam("email") String email, Model model) {
+
+		User currentUser = userService.findByEmail(email);
+		if (currentUser == null) {
+			return "redirect:/auth/login";
+		}
+
+		List<User> searchResults = (keyword == null || keyword.isEmpty()) ? List.of()
+				: userService.searchUsers(keyword);
+
+		model.addAttribute("currentUser", currentUser);
+		model.addAttribute("searchResults", searchResults);
+		model.addAttribute("keyword", keyword);
+
+		return "search-users";
+	}
+
+	@PostMapping("/follow-toggle")
+	public String toggleFollow(@RequestParam("email") String email, @RequestParam("targetId") Long targetId) {
+		User currentUser = userService.findByEmail(email);
+		User targetUser = userService.findById(targetId);
+
+		if (currentUser != null && targetUser != null && !currentUser.getId().equals(targetUser.getId())) {
+			if (followService.isFollowing(currentUser, targetUser)) {
+				followService.unfollowUser(currentUser, targetUser);
+			} else {
+				followService.followUser(currentUser, targetUser);
+			}
+		}
+		return "redirect:/user/search?keyword=&email=" + email;
+	}
+
 }

@@ -12,11 +12,11 @@
 
 <body>
 	<div class="dashboard-container">
-		<form th:action="@{/user/search}" method="get" class="create-post-form" style="display: flex; gap: 10px; align-items: center;">
-		       <input type="hidden" name="email" th:value="${user.email}" />
-		       <input type="text" name="keyword" placeholder="Search users..." style="flex: 1; padding:8px; border-radius:6px; border:1px solid #ccc;" />
-		       <button type="submit" class="btn-post" style="padding:8px 16px;">Search</button>
-		   </form>		
+		<form th:action="@{/user/search}" method="get">
+			<input type="hidden" name="email" th:value="${user.email}" />
+			<input type="text" name="keyword" placeholder="Search users..." />
+			<button type="submit">Search</button>
+		</form>
 		<!-- Profile Section -->
 		<div class="profile-header">
 			<div class="profile-pic-container">

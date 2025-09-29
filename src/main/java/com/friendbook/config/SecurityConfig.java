@@ -24,7 +24,7 @@ public class SecurityConfig {
                 .permitAll()
 
                 // Everything else requires authentication
-                .anyRequest().authenticated()
+                .anyRequest().authenticated()	
             )
             .logout(logout -> logout.permitAll())
             .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
