@@ -31,6 +31,24 @@
 
 				<p th:if="${uploadError != null}" th:text="${uploadError}" class="error"></p>
 				<p th:if="${message != null}" th:text="${message}" class="success"></p>
+
+				<!-- ✅ Followers / Following info -->
+				<div class="follow-info">
+					<span th:text="${followersCount}">0</span> Followers
+					<span th:text="${followingCount}">0</span> Following
+				</div>
+
+				<!-- ✅ Toggle Follow/Unfollow -->
+				<form th:if="${target != null}" th:action="${isFollowing} ? @{/follow/undo} : @{/follow/do}"
+					method="post">
+					<input type="hidden" name="email" th:value="${user.email}" />
+					<input type="hidden" name="targetId" th:value="${target.id}" />
+
+					<!-- button text change dynamically -->
+					<button type="submit" class="btn" th:text="${isFollowing} ? 'Unfollow' : 'Follow'">
+						Follow
+					</button>
+				</form>
 			</div>
 		</div>
 
@@ -73,15 +91,6 @@
 					<div class="post-options">
 						<span class="dots">⋮</span>
 						<div class="dropdown-menu">
-<!--							 ✅ Update Option 
-							<form th:action="@{/posts/update}" method="post" enctype="multipart/form-data" class="update-form">
-								<input type="hidden" name="postId" th:value="${post.id}" />
-								<input type="hidden" name="email" th:value="${user.email}" />
-								<input type="text" name="caption" required th:text="${post.caption}"></input>
-
-								<button type="submit" class="update-btn">Update</button>
-							</form>
--->
 							<!-- ✅ Delete Option -->
 							<form th:action="@{/posts/delete}" method="post" class="delete-form"
 								onsubmit="return confirmDelete();">
@@ -132,3 +141,5 @@
 	</div>
 
 </body>
+
+</html>

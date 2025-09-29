@@ -93,4 +93,6 @@ public class AuthController {
 	public String home() {
 		return "index";
 	}
+	
+
 }

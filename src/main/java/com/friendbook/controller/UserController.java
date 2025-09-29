@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.friendbook.model.Post;
 import com.friendbook.model.User;
 import com.friendbook.service.CommentService;
+import com.friendbook.service.FollowService;
 import com.friendbook.service.LikeService;
 import com.friendbook.service.PostService;
 import com.friendbook.service.UserService;
@@ -26,12 +27,15 @@ public class UserController {
 	private final PostService postService;
 	private final LikeService likeService;
 	private final CommentService commentService;
+	private final FollowService followService;
+	
 
-	public UserController(UserService userService, PostService postService, LikeService likeService,CommentService commentService) {
+	public UserController(UserService userService, PostService postService, LikeService likeService,CommentService commentService,FollowService followService) {
 		this.userService = userService;
 		this.postService = postService;
 		this.likeService = likeService;
 		this.commentService=commentService;
+		this.followService=followService;
 	}
 
 	@GetMapping("/dashboard")
@@ -47,6 +51,15 @@ public class UserController {
 		model.addAttribute("posts", posts); // 🟢 attribute ka naam fix kiya
 		model.addAttribute("likeService", likeService); // so Thymeleaf can call countLikes
 		model.addAttribute("commentService", commentService);
+		
+		model.addAttribute("followersCount", followService.countFollowers(user));
+		model.addAttribute("followingCount", followService.countFollowing(user));
+		   User target = userService.findById(2L); 
+		    if (target != null) {
+		        boolean isFollowing = followService.isFollowing(user, target);
+		        model.addAttribute("target", target);
+		        model.addAttribute("isFollowing", isFollowing);
+		    }
 		return "dashboard";
 	}
 
@@ -83,4 +96,7 @@ public class UserController {
 		}
 		return "dashboard";
 	}
+	
+	
+	
 }

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Notifications - FriendBook</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <script th:src="@{/js/script.js}"></script>
+</head>
+
+<body>
+    <!-- ✅ Navbar -->
+    <div class="navbar">
+        <div class="logo">FriendBook</div>
+        <ul>
+            <li><a th:href="@{/dashboard}">Home</a></li>
+            <li><a th:href="@{/notifications}">Notifications</a></li>
+            <li><a th:href="@{/logout}">Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="dashboard-container">
+        <h2>Notifications</h2>
+        <hr />
+
+        <!-- ✅ Agar notifications empty hain -->
+        <div th:if="${notifications == null or notifications.isEmpty()}">
+            <p>No notifications yet.</p>
+        </div>
+
+        <!-- ✅ Notifications list -->
+        <div class="notifications">
+            <div th:each="n : ${notifications}" class="notification-card">
+                <p>
+                    <b th:text="${n.title}">Notification Title</b><br />
+                    <span th:text="${n.message}">Notification message...</span>
+                </p>
+                <small th:text="${#temporals.format(n.createdAt, 'dd-MM-yyyy HH:mm')}"></small>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
