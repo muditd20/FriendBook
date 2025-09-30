@@ -11,6 +11,7 @@ import com.friendbook.repository.FollowRequestRepository;
 
 @Service
 public class FollowRequestService {
+
 	private final FollowRequestRepository repo;
 	private final NotificationService notificationService;
 
@@ -31,29 +32,49 @@ public class FollowRequestService {
 		req.setStatus(FollowRequest.Status.PENDING);
 		repo.save(req);
 
-		// Notification
+		// create notification for receiver
 		notificationService.createNotification(receiver, "Follow Request",
 				sender.getName() + " has sent you a follow request.");
 	}
 
-	// ✅ Accept by id
-	public void acceptRequest(Long requestId) {
+	// Accept by id — now creates notification to sender
+	public boolean acceptRequest(Long requestId, User actingUser) {
 		Optional<FollowRequest> opt = repo.findById(requestId);
 		if (opt.isPresent()) {
 			FollowRequest request = opt.get();
+			// security: only receiver can accept
+			if (!request.getReceiver().getId().equals(actingUser.getId())) {
+				return false;
+			}
 			request.setStatus(FollowRequest.Status.ACCEPTED);
 			repo.save(request);
+
+			// notify sender
+			notificationService.createNotification(request.getSender(), "Follow Request Accepted",
+					request.getReceiver().getName() + " accepted your follow request.");
+			return true;
 		}
+		return false;
 	}
 
-	// ✅ Reject by id
-	public void rejectRequest(Long requestId) {
+	// Reject by id — now creates notification to sender
+	public boolean rejectRequest(Long requestId, User actingUser) {
 		Optional<FollowRequest> opt = repo.findById(requestId);
 		if (opt.isPresent()) {
 			FollowRequest request = opt.get();
+			// security: only receiver can reject
+			if (!request.getReceiver().getId().equals(actingUser.getId())) {
+				return false;
+			}
 			request.setStatus(FollowRequest.Status.REJECTED);
 			repo.save(request);
+
+			// notify sender
+			notificationService.createNotification(request.getSender(), "Follow Request Rejected",
+					request.getReceiver().getName() + " rejected your follow request.");
+			return true;
 		}
+		return false;
 	}
 
 	public List<FollowRequest> getPendingRequests(User receiver) {
@@ -65,12 +86,10 @@ public class FollowRequestService {
 		return fr != null && fr.getStatus() == FollowRequest.Status.ACCEPTED;
 	}
 
-	// ✅ Count followers (who accepted following this user)
 	public long countFollowers(User user) {
 		return repo.countByReceiverAndStatus(user, FollowRequest.Status.ACCEPTED);
 	}
 
-	// ✅ Count following (how many this user follows)
 	public long countFollowing(User user) {
 		return repo.countBySenderAndStatus(user, FollowRequest.Status.ACCEPTED);
 	}

@@ -2,114 +2,114 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-	<meta charset="UTF-8" />
-	<title>Notifications - FriendBook</title>
-	<link rel="stylesheet" th:href="@{/css/style.css}" />
-	<script th:src="@{/js/script.js}"></script>
-	<link rel="icon" href="data:," />
-	<style>
-		/* Navbar aligned with dashboard container */
-		.navbar {
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			background-color: #1f2937;
-			padding: 10px 20px;
-			border-radius: 12px;
-			margin-bottom: 20px;
-			color: white;
-		}
+    <meta charset="UTF-8" />
+    <title>Notifications - FriendBook</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <script th:src="@{/js/script.js}"></script>
+    <link rel="icon" href="data:," />
+    <style>
+        /* Navbar aligned with dashboard container */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #1f2937;
+            padding: 10px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            color: white;
+        }
 
-		.navbar a {
-			color: white;
-			text-decoration: none;
-			margin-right: 15px;
-			font-weight: bold;
-		}
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-right: 15px;
+            font-weight: bold;
+        }
 
-		.navbar a:hover {
-			text-decoration: underline;
-		}
+        .navbar a:hover {
+            text-decoration: underline;
+        }
 
-		.navbar .nav-left,
-		.navbar .nav-right {
-			display: flex;
-			align-items: center;
-		}
+        .navbar .nav-left,
+        .navbar .nav-right {
+            display: flex;
+            align-items: center;
+        }
 
-		/* Notification card styling */
-		.notification-card {
-			background: #f9f9f9;
-			border-radius: 10px;
-			padding: 15px;
-			margin-bottom: 10px;
-			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-		}
+        /* Notification card styling */
+        .notification-card {
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
 
-		.notification-card form button {
-			margin-right: 10px;
-			padding: 5px 10px;
-			border: none;
-			border-radius: 6px;
-			cursor: pointer;
-			background-color: #1f2937;
-			color: white;
-		}
+        .notification-card form button {
+            margin-right: 10px;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            background-color: #1f2937;
+            color: white;
+        }
 
-		.notification-card form button:hover {
-			background-color: #374151;
-		}
-	</style>
+        .notification-card form button:hover {
+            background-color: #374151;
+        }
+    </style>
 </head>
 
 <body>
-	<div class="dashboard-container">
+    <div class="dashboard-container">
 
-		<!-- 🔝 Navbar -->
-		<div class="navbar">
-			<div class="nav-left">
-				<a th:href="@{/user/dashboard(email=${user.email})}">Home</a>
-				<a th:href="@{/user/notifications(email=${user.email})}">Notifications</a>
-				<a th:href="@{/user/search(email=${user.email})}">Search</a>
-			</div>
-			<div class="nav-right">
-				<span th:text="${user.name}"></span>
-			</div>
-		</div>
+        <!-- 🔝 Navbar -->
+        <div class="navbar">
+            <div class="nav-left">
+                <a th:href="@{/user/dashboard(email=${user.email})}">Home</a>
+                <a th:href="@{/user/notifications(email=${user.email})}">Notifications</a>
+                <a th:href="@{/user/search(email=${user.email})}">Search</a>
+            </div>
+            <div class="nav-right">
+                <span th:text="${user.name}"></span>
+            </div>
+        </div>
 
-		<h2>Notifications</h2>
-		<hr />
+        <h2>Notifications</h2>
+        <hr />
 
-		<!-- ✅ No notifications -->
-		<div th:if="${notifications == null or notifications.isEmpty()}">
-			<p>No notifications yet.</p>
-		</div>
+        <!-- ✅ No notifications -->
+        <div th:if="${notifications == null or notifications.isEmpty()}">
+            <p>No notifications yet.</p>
+        </div>
 
-		<!-- ✅ Notifications list -->
-		<div class="notifications">
-			<div th:each="n : ${notifications}" class="notification-card">
-				<p>
-					<b>Follow Request</b><br />
-					<span th:text="${n.sender.name} + ' wants to follow you'">Notification message...</span>
-				</p>
-				<small th:text="${#temporals.format(n.createdAt, 'dd-MM-yyyy HH:mm')}"></small>
+        <!-- ✅ Notifications list -->
+        <div class="notifications">
+            <div th:each="n : ${notifications}" class="notification-card">
+                <p>
+                    <b>Follow Request</b><br />
+                    <span th:text="${n.sender.name} + ' wants to follow you'">Notification message...</span>
+                </p>
+                <small th:text="${#temporals.format(n.createdAt, 'dd-MM-yyyy HH:mm')}"></small>
 
-				<!-- Accept/Reject buttons -->
-				<form th:action="@{/user/requests/accept}" method="post" style="display:inline;">
-					<input type="hidden" name="requestId" th:value="${n.id}" />
-					<input type="hidden" name="email" th:value="${user.email}" />
-					<button type="submit">Accept</button>
-				</form>
+                <!-- Accept/Reject buttons -->
+                <form th:action="@{/user/follow-requests/accept}" method="post" style="display:inline;">
+                    <input type="hidden" name="requestId" th:value="${n.id}" />
+                    <input type="hidden" name="email" th:value="${user.email}" />
+                    <button type="submit">Accept</button>
+                </form>
 
-				<form th:action="@{/user/requests/reject}" method="post" style="display:inline;">
-					<input type="hidden" name="requestId" th:value="${n.id}" />
-					<input type="hidden" name="email" th:value="${user.email}" />
-					<button type="submit">Reject</button>
-				</form>
-			</div>
-		</div>
+                <form th:action="@{/user/follow-requests/reject}" method="post" style="display:inline;">
+                    <input type="hidden" name="requestId" th:value="${n.id}" />
+                    <input type="hidden" name="email" th:value="${user.email}" />
+                    <button type="submit">Reject</button>
+                </form>
+            </div>
+        </div>
 
-	</div>
+    </div>
 </body>
 
 </html>
