@@ -14,8 +14,10 @@ import org.springframework.web.multipart.MultipartFile;
 import com.friendbook.model.Post;
 import com.friendbook.model.User;
 import com.friendbook.model.FollowRequest;
+import com.friendbook.model.Notification;
 import com.friendbook.service.CommentService;
 import com.friendbook.service.LikeService;
+import com.friendbook.service.NotificationService;
 import com.friendbook.service.PostService;
 import com.friendbook.service.UserService;
 import com.friendbook.service.FollowRequestService;
@@ -29,14 +31,17 @@ public class UserController {
 	private final LikeService likeService;
 	private final CommentService commentService;
 	private final FollowRequestService followRequestService;
+	private final NotificationService notificationService;
 
 	public UserController(UserService userService, PostService postService, LikeService likeService,
-			CommentService commentService, FollowRequestService followRequestService) {
+			CommentService commentService, FollowRequestService followRequestService,
+			NotificationService notificationService) {
 		this.userService = userService;
 		this.postService = postService;
 		this.likeService = likeService;
 		this.commentService = commentService;
 		this.followRequestService = followRequestService;
+		this.notificationService = notificationService;
 	}
 
 	@GetMapping("/dashboard")
@@ -112,44 +117,73 @@ public class UserController {
 		return "follow-requests";
 	}
 
-	// NOTE: updated mappings to match the form actions in your templates
-	@PostMapping("/follow-requests/accept")
-	public String acceptFollowRequest(@RequestParam("requestId") Long requestId, @RequestParam("email") String email) {
-		User actingUser = userService.findByEmail(email);
-		if (actingUser != null) {
-			followRequestService.acceptRequest(requestId, actingUser);
-		}
-		return "redirect:/user/requests?email=" + email;
+	@GetMapping("/notifications")
+	public String notifications(@RequestParam("email") String email, Model model) {
+		User user = userService.findByEmail(email);
+		if (user == null)
+			return "redirect:/auth/login";
+
+		// 1. Pending follow requests
+		List<FollowRequest> pendingRequests = followRequestService.getPendingRequests(user);
+
+		// 2. Follow-back notifications
+		List<Notification> notifications = notificationService.getNotifications(user);
+		notifications.forEach(n -> {
+			if (n.getMessage().contains("::FOLLOW_BACK::")) {
+				String[] parts = n.getMessage().split("::");
+				n.setMessagePart1(parts[0]); // "Do you also follow XYZ?"
+				n.setFollowBackUserId(Long.parseLong(parts[2]));
+			}
+		});
+
+		model.addAttribute("user", user);
+		model.addAttribute("notifications", pendingRequests);
+		model.addAttribute("otherNotifications", notifications);
+
+		return "notification";
 	}
 
+	@PostMapping("/follow-requests/accept")
+	public String acceptFollowRequest(@RequestParam("requestId") Long requestId,
+	                                  @RequestParam("email") String email) {
+	    User actingUser = userService.findByEmail(email);
+	    if (actingUser != null) {
+	        User sender = followRequestService.acceptRequest(requestId, actingUser);
+	        if (sender != null) {
+	            // ✅ Notification create for follow-back
+	            notificationService.createFollowBackNotification(actingUser, sender);
+	        }
+	    }
+	    return "redirect:/user/notifications?email=" + email;
+	}
+	
 	@PostMapping("/follow-requests/reject")
 	public String rejectFollowRequest(@RequestParam("requestId") Long requestId, @RequestParam("email") String email) {
 		User actingUser = userService.findByEmail(email);
 		if (actingUser != null) {
 			followRequestService.rejectRequest(requestId, actingUser);
 		}
-		return "redirect:/user/requests?email=" + email;
+		return "redirect:/user/notifications?email=" + email;
 	}
 
 	@PostMapping("/follow-toggle")
-	public String toggleFollow(@RequestParam("email") String email, @RequestParam("targetId") Long targetId) {
-		User currentUser = userService.findByEmail(email);
-		User targetUser = userService.findById(targetId);
-		if (currentUser != null && targetUser != null && !currentUser.getId().equals(targetUser.getId())) {
-			followRequestService.sendRequest(currentUser, targetUser);
-		}
-		return "redirect:/user/search?keyword=&email=" + email;
-	}
+	public String toggleFollow(@RequestParam("email") String email,
+	                           @RequestParam("targetId") Long targetId,
+	                           @RequestParam(value = "isFollowBack", required = false) Boolean isFollowBack) {
+	    User currentUser = userService.findByEmail(email);
+	    User targetUser = userService.findById(targetId);
 
-	@GetMapping("/notifications")
-	public String notifications(@RequestParam("email") String email, Model model) {
-		User user = userService.findByEmail(email);
-		if (user == null)
-			return "redirect:/auth/login";
-		List<FollowRequest> pendingRequests = followRequestService.getPendingRequests(user);
-		model.addAttribute("user", user);
-		// reusing notifications model name as before (these are FollowRequest objects)
-		model.addAttribute("notifications", pendingRequests);
-		return "notification";
+	    if (currentUser != null && targetUser != null && !currentUser.getId().equals(targetUser.getId())) {
+	        if (Boolean.TRUE.equals(isFollowBack)) {
+	            // ✅ Direct follow-back
+	            followRequestService.followBack(currentUser, targetUser);
+	            // sirf iss target user ka follow-back notification remove karo
+	            notificationService.clearFollowBackNotification(currentUser, targetUser.getId());
+	        } else {
+	            // ✅ Normal request
+	            followRequestService.sendRequest(currentUser, targetUser);
+	        }
+	    }
+	    return "redirect:/user/notifications?email=" + email;
 	}
 }

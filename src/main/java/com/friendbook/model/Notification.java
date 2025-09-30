@@ -1,72 +1,84 @@
 package com.friendbook.model;
 
-import java.time.LocalDateTime;
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "notifications")
 public class Notification {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    private String title;
-    private String message;
-    private LocalDateTime createdAt = LocalDateTime.now();
+	private String title;
 
-    @ManyToOne
-    @JoinColumn(name = "receiver_id", nullable = false)
-    private User receiver;
+	@Column(length = 1000)
+	private String message;
 
-    @Column(name = "is_read")  // ✅ Rename the column to avoid reserved keyword
-    private boolean read = false;
+	private LocalDateTime createdAt = LocalDateTime.now();
 
-    // getters & setters
-    public Long getId() {
-        return id;
-    }
+	@ManyToOne
+	private User receiver;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	// Transient fields for parsing follow-back
+	@Transient
+	private String messagePart1;
+	@Transient
+	private Long followBackUserId;
 
-    public String getTitle() {
-        return title;
-    }
+	// ---------------- Getters & Setters ----------------
+	public Long getId() {
+		return id;
+	}
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public String getMessage() {
-        return message;
-    }
+	public String getTitle() {
+		return title;
+	}
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
+	public String getMessage() {
+		return message;
+	}
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
+	public void setMessage(String message) {
+		this.message = message;
+	}
 
-    public User getReceiver() {
-        return receiver;
-    }
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
 
-    public void setReceiver(User receiver) {
-        this.receiver = receiver;
-    }
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
 
-    public boolean isRead() {
-        return read;
-    }
+	public User getReceiver() {
+		return receiver;
+	}
 
-    public void setRead(boolean read) {
-        this.read = read;
-    }
+	public void setReceiver(User receiver) {
+		this.receiver = receiver;
+	}
+
+	public String getMessagePart1() {
+		return messagePart1;
+	}
+
+	public void setMessagePart1(String messagePart1) {
+		this.messagePart1 = messagePart1;
+	}
+
+	public Long getFollowBackUserId() {
+		return followBackUserId;
+	}
+
+	public void setFollowBackUserId(Long followBackUserId) {
+		this.followBackUserId = followBackUserId;
+	}
 }
