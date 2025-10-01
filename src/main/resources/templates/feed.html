@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<title>Feed - FriendBook</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}" />
+	<style>
+			.navbar {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				background-color: #1f2937;
+				padding: 10px 20px;
+				border-radius: 12px;
+				margin-bottom: 20px;
+				color: white;
+			}
+
+			.navbar a {
+				color: white;
+				text-decoration: none;
+				margin-right: 15px;
+				font-weight: bold;
+			}
+
+			.navbar a:hover {
+				text-decoration: underline;
+			}
+
+			.notification-card {
+				border: 1px solid #ddd;
+				padding: 10px;
+				margin: 10px 0;
+				border-radius: 8px;
+			}
+		</style>
+</head>
+
+<body>
+	<div class="dashboard-container">
+		<div class="navbar">
+			<div class="nav-left">
+				<a th:href="@{/user/dashboard(email=${user.email})}">Home</a>
+				<a th:href="@{/user/notifications(email=${user.email})}">Notifications</a>
+				<a th:href="@{/user/search(email=${user.email})}">Search</a>
+				<a th:href="@{/user/feed(email=${user.email})}">Feed</a>
+			</div>
+			<div class="nav-right">
+				<span th:text="${user.name}"></span>
+			</div>
+		</div>
+
+		<h2>Feed</h2>
+		<hr />
+
+		<div th:if="${posts == null or #lists.isEmpty(posts)}">
+			<p>No posts to show. Follow users to see their posts.</p>
+		</div>
+
+		<div class="posts">
+			<div th:each="post : ${posts}" class="post-card">
+				<div class="post-header">
+					<img th:if="${post.user.profilePhoto != null}" th:src="@{'/uploads/' + ${post.user.profilePhoto}}"
+						class="post-user-pic" />
+					<div class="post-user-info">
+						<h4 th:text="${post.user.name}"></h4>
+						<p class="post-date" th:text="${#temporals.format(post.createdAt, 'dd-MM-yyyy HH:mm')}"></p>
+					</div>
+				</div>
+				<p class="post-caption" th:text="${post.caption}"></p>
+				<img th:if="${post.imagePath != null}" th:src="@{'/uploads/' + ${post.imagePath}}" class="post-img" />
+				<div class="post-actions">
+					<form th:action="@{/likes/toggle}" method="post">
+						<input type="hidden" name="email" th:value="${user.email}" />
+						<input type="hidden" name="postId" th:value="${post.id}" />
+						<button type="submit">❤️ Like</button>
+						<span th:text="${likeService.countLikes(post)} + ' Likes'"></span>
+					</form>
+				</div>
+				<div class="comments">
+					<p><b>Comments:</b></p>
+					<div th:each="comment : ${commentService.getComments(post)}">
+						<p><b th:text="${comment.user.name}"></b>: <span th:text="${comment.text}"></span></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

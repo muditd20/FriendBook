@@ -48,6 +48,7 @@
 				<a th:href="@{/user/dashboard(email=${currentUser.email})}">Home</a>
 				<a th:href="@{/user/notifications(email=${currentUser.email})}">Notifications</a>
 				<a th:href="@{/user/search(email=${currentUser.email})}">Search</a>
+				<a th:href="@{/user/feed(email=${currentUser.email})}">Feed</a>
 			</div>
 			<div class="nav-right">
 				<span th:text="${currentUser.name}"></span>

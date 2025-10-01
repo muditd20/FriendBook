@@ -44,6 +44,7 @@
 				<a th:href="@{/user/dashboard(email=${user.email})}">Home</a>
 				<a th:href="@{/user/notifications(email=${user.email})}">Notifications</a>
 				<a th:href="@{/user/search(email=${user.email})}">Search</a>
+				<a th:href="@{/user/feed(email=${user.email})}">Feed</a> 
 			</div>
 			<div class="nav-right">
 				<span th:text="${user.name}"></span>
@@ -86,7 +87,6 @@
 				<form th:if="${notif.followBackUserId != null}" th:action="@{/user/follow-toggle}" method="post">
 					<input type="hidden" name="email" th:value="${user.email}" />
 					<input type="hidden" name="targetId" th:value="${notif.followBackUserId}" />
-					<!-- ✅ yeh add karo -->
 					<input type="hidden" name="isFollowBack" value="true" />
 					<button type="submit">Follow Back</button>
 				</form>

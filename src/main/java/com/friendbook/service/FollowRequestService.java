@@ -107,4 +107,11 @@ public class FollowRequestService {
 		return repo.findBySenderAndReceiver(sender, receiver);
 	}
 	
+	public List<User> getFollowingUsers(User user) {
+	    return repo.findBySenderAndStatus(user, FollowRequest.Status.ACCEPTED)
+	               .stream()
+	               .map(FollowRequest::getReceiver)
+	               .toList();
+	}
+
 }

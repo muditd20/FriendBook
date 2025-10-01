@@ -88,4 +88,13 @@ public class PostService {
 		}
 		return postRepository.save(post);
 	}
+	
+	public List<Post> getFeedPosts(User currentUser, FollowRequestService followRequestService) {
+	    List<User> followingUsers = followRequestService.getFollowingUsers(currentUser);
+	    if (followingUsers.isEmpty()) {
+	        return List.of(); // No following, empty feed
+	    }
+	    return postRepository.findByUserInOrderByCreatedAtDesc(followingUsers);
+	}
+
 }

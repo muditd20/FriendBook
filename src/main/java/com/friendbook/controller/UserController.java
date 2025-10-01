@@ -144,19 +144,18 @@ public class UserController {
 	}
 
 	@PostMapping("/follow-requests/accept")
-	public String acceptFollowRequest(@RequestParam("requestId") Long requestId,
-	                                  @RequestParam("email") String email) {
-	    User actingUser = userService.findByEmail(email);
-	    if (actingUser != null) {
-	        User sender = followRequestService.acceptRequest(requestId, actingUser);
-	        if (sender != null) {
-	            // ✅ Notification create for follow-back
-	            notificationService.createFollowBackNotification(actingUser, sender);
-	        }
-	    }
-	    return "redirect:/user/notifications?email=" + email;
+	public String acceptFollowRequest(@RequestParam("requestId") Long requestId, @RequestParam("email") String email) {
+		User actingUser = userService.findByEmail(email);
+		if (actingUser != null) {
+			User sender = followRequestService.acceptRequest(requestId, actingUser);
+			if (sender != null) {
+				// ✅ Notification create for follow-back
+				notificationService.createFollowBackNotification(actingUser, sender);
+			}
+		}
+		return "redirect:/user/notifications?email=" + email;
 	}
-	
+
 	@PostMapping("/follow-requests/reject")
 	public String rejectFollowRequest(@RequestParam("requestId") Long requestId, @RequestParam("email") String email) {
 		User actingUser = userService.findByEmail(email);
@@ -167,23 +166,22 @@ public class UserController {
 	}
 
 	@PostMapping("/follow-toggle")
-	public String toggleFollow(@RequestParam("email") String email,
-	                           @RequestParam("targetId") Long targetId,
-	                           @RequestParam(value = "isFollowBack", required = false) Boolean isFollowBack) {
-	    User currentUser = userService.findByEmail(email);
-	    User targetUser = userService.findById(targetId);
+	public String toggleFollow(@RequestParam("email") String email, @RequestParam("targetId") Long targetId,
+			@RequestParam(value = "isFollowBack", required = false) Boolean isFollowBack) {
+		User currentUser = userService.findByEmail(email);
+		User targetUser = userService.findById(targetId);
 
-	    if (currentUser != null && targetUser != null && !currentUser.getId().equals(targetUser.getId())) {
-	        if (Boolean.TRUE.equals(isFollowBack)) {
-	            // ✅ Direct follow-back
-	            followRequestService.followBack(currentUser, targetUser);
-	            // sirf iss target user ka follow-back notification remove karo
-	            notificationService.clearFollowBackNotification(currentUser, targetUser.getId());
-	        } else {
-	            // ✅ Normal request
-	            followRequestService.sendRequest(currentUser, targetUser);
-	        }
-	    }
-	    return "redirect:/user/notifications?email=" + email;
+		if (currentUser != null && targetUser != null && !currentUser.getId().equals(targetUser.getId())) {
+			if (Boolean.TRUE.equals(isFollowBack)) {
+				// ✅ Direct follow-back
+				followRequestService.followBack(currentUser, targetUser);
+				// sirf iss target user ka follow-back notification remove karo
+				notificationService.clearFollowBackNotification(currentUser, targetUser.getId());
+			} else {
+				// ✅ Normal request
+				followRequestService.sendRequest(currentUser, targetUser);
+			}
+		}
+		return "redirect:/user/notifications?email=" + email;
 	}
 }
