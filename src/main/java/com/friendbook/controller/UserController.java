@@ -99,6 +99,10 @@ public class UserController {
 		}
 		List<User> searchResults = (keyword == null || keyword.isEmpty()) ? List.of()
 				: userService.searchUsers(keyword);
+
+		// ✅ Set alreadyFollowing for each user
+		searchResults.forEach(u -> u.setAlreadyFollowing(followRequestService.isFollowing(currentUser, u)));
+
 		model.addAttribute("currentUser", currentUser);
 		model.addAttribute("searchResults", searchResults);
 		model.addAttribute("keyword", keyword);
@@ -123,22 +127,22 @@ public class UserController {
 		if (user == null)
 			return "redirect:/auth/login";
 
-		// 1. Pending follow requests
+		// Pending follow requests
 		List<FollowRequest> pendingRequests = followRequestService.getPendingRequests(user);
 
-		// 2. Follow-back notifications
-		List<Notification> notifications = notificationService.getNotifications(user);
-		notifications.forEach(n -> {
+		// Follow-back notifications
+		List<Notification> followBacks = notificationService.getNotifications(user);
+		followBacks.forEach(n -> {
 			if (n.getMessage().contains("::FOLLOW_BACK::")) {
 				String[] parts = n.getMessage().split("::");
-				n.setMessagePart1(parts[0]); // "Do you also follow XYZ?"
+				n.setMessagePart1(parts[0]);
 				n.setFollowBackUserId(Long.parseLong(parts[2]));
 			}
 		});
 
 		model.addAttribute("user", user);
 		model.addAttribute("notifications", pendingRequests);
-		model.addAttribute("otherNotifications", notifications);
+		model.addAttribute("otherNotifications", followBacks);
 
 		return "notification";
 	}

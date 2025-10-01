@@ -87,10 +87,12 @@
 						<form th:action="@{/user/follow-toggle}" method="post">
 							<input type="hidden" name="email" th:value="${currentUser.email}" />
 							<input type="hidden" name="targetId" th:value="${user.id}" />
-							<button type="submit" class="btn"
-								th:text="${#lists.contains(#ids, user.id) ? 'Unfollow' : 'Follow'}">Follow</button>
+							<button type="submit" class="btn" th:if="${!user.alreadyFollowing}" th:text="'Follow'">
+							</button>
+							<span th:if="${user.alreadyFollowing}">You already follow him</span>
 						</form>
 					</div>
+
 				</div>
 			</div>
 		</div>

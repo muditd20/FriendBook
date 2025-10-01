@@ -17,8 +17,11 @@ public class User {
 
     private String name;
 
-    // 🟢 new column for profile photo filename
     private String profilePhoto;
+
+    // 🟢 Transient field to track follow status
+    @Transient
+    private boolean alreadyFollowing;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -34,4 +37,7 @@ public class User {
 
     public String getProfilePhoto() { return profilePhoto; }
     public void setProfilePhoto(String profilePhoto) { this.profilePhoto = profilePhoto; }
+
+    public boolean isAlreadyFollowing() { return alreadyFollowing; }
+    public void setAlreadyFollowing(boolean alreadyFollowing) { this.alreadyFollowing = alreadyFollowing; }
 }
