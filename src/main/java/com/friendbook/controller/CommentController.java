@@ -25,13 +25,20 @@ public class CommentController {
 		this.postService = postService;
 	}
 	
-	@PostMapping("/add")
-	public String addComment(@RequestParam("email") String email,@RequestParam("postId") Long postId,@RequestParam("text")String text)
-	{
-		User user = userService.findByEmail(email);
-		Post post = postService.findById(postId);
-		commentService.addComment(user, post, text);
-		return "redirect:/user/dashboard?email=" + email;
-	}
+	   @PostMapping("/add")
+	    public String addComment(@RequestParam("email") String email,
+	                             @RequestParam("postId") Long postId,
+	                             @RequestParam("text") String text,
+	                             @RequestParam("redirectPage") String redirectPage) {
 
+	        User user = userService.findByEmail(email);
+	        Post post = postService.findById(postId);
+	        commentService.addComment(user, post, text);
+
+	        if ("feed".equalsIgnoreCase(redirectPage)) {
+	            return "redirect:/user/feed?email=" + email;
+	        } else {
+	            return "redirect:/user/dashboard?email=" + email;
+	        }
+	    }
 }

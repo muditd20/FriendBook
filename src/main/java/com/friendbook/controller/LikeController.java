@@ -25,13 +25,19 @@ public class LikeController {
 		this.likeService = likeService;
 	}
 	
-	@PostMapping("/toggle")
-	public String toogleLike(@RequestParam("email") String email, @RequestParam("postId")Long postId)
-	{
-		User user = userService.findByEmail(email);
-		Post post=postService.findById(postId);
-		likeService.toogleLike(user, post);
-		return "redirect:/user/dashboard?email=" + email;
-	}
+	   @PostMapping("/toggle")
+	    public String toggleLike(@RequestParam("email") String email,
+	                             @RequestParam("postId") Long postId,
+	                             @RequestParam("redirectPage") String redirectPage) {
 
+	        User user = userService.findByEmail(email);
+	        Post post = postService.findById(postId);
+	        likeService.toggleLike(user, post);
+
+	        if ("feed".equalsIgnoreCase(redirectPage)) {
+	            return "redirect:/user/feed?email=" + email;
+	        } else {
+	            return "redirect:/user/dashboard?email=" + email;
+	        }
+	    }
 }

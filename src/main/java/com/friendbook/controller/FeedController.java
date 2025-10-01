@@ -46,7 +46,7 @@ public class FeedController {
 		List<Post> feedPosts = postService.getFeedPosts(currentUser, followRequestService);
 
 		model.addAttribute("user", currentUser);
-		model.addAttribute("posts", feedPosts); // this is what feed.html uses
+		model.addAttribute("posts", feedPosts); 
 		model.addAttribute("likeService", likeService);
 		model.addAttribute("commentService", commentService);
 

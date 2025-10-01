@@ -6,35 +6,64 @@
 	<title>Feed - FriendBook</title>
 	<link rel="stylesheet" th:href="@{/css/style.css}" />
 	<style>
-			.navbar {
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-				background-color: #1f2937;
-				padding: 10px 20px;
-				border-radius: 12px;
-				margin-bottom: 20px;
-				color: white;
-			}
+		.navbar {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			background-color: #1f2937;
+			padding: 10px 20px;
+			border-radius: 12px;
+			margin-bottom: 20px;
+			color: white;
+		}
 
-			.navbar a {
-				color: white;
-				text-decoration: none;
-				margin-right: 15px;
-				font-weight: bold;
-			}
+		.navbar a {
+			color: white;
+			text-decoration: none;
+			margin-right: 15px;
+			font-weight: bold;
+		}
 
-			.navbar a:hover {
-				text-decoration: underline;
-			}
+		.navbar a:hover {
+			text-decoration: underline;
+		}
 
-			.notification-card {
-				border: 1px solid #ddd;
-				padding: 10px;
-				margin: 10px 0;
-				border-radius: 8px;
-			}
-		</style>
+		.post-card {
+			border: 1px solid #ddd;
+			padding: 15px;
+			margin-bottom: 20px;
+			border-radius: 10px;
+		}
+
+		.post-user-pic {
+			width: 40px;
+			height: 40px;
+			border-radius: 50%;
+			margin-right: 10px;
+		}
+
+		.post-img {
+			max-width: 100%;
+			margin-top: 10px;
+			border-radius: 8px;
+		}
+
+		.comments {
+			margin-top: 15px;
+			padding-left: 10px;
+		}
+
+		.comment-form {
+			display: flex;
+			margin-top: 10px;
+		}
+
+		.comment-form input[type="text"] {
+			flex: 1;
+			padding: 5px;
+			margin-right: 5px;
+		}
+	</style>
 </head>
 
 <body>
@@ -60,7 +89,8 @@
 
 		<div class="posts">
 			<div th:each="post : ${posts}" class="post-card">
-				<div class="post-header">
+				<!-- Post Header -->
+				<div class="post-header" style="display:flex;align-items:center;">
 					<img th:if="${post.user.profilePhoto != null}" th:src="@{'/uploads/' + ${post.user.profilePhoto}}"
 						class="post-user-pic" />
 					<div class="post-user-info">
@@ -68,20 +98,42 @@
 						<p class="post-date" th:text="${#temporals.format(post.createdAt, 'dd-MM-yyyy HH:mm')}"></p>
 					</div>
 				</div>
+
+				<!-- Post Content -->
 				<p class="post-caption" th:text="${post.caption}"></p>
 				<img th:if="${post.imagePath != null}" th:src="@{'/uploads/' + ${post.imagePath}}" class="post-img" />
+
+				<!-- Post Actions -->
 				<div class="post-actions">
+					<!-- Like Form -->
 					<form th:action="@{/likes/toggle}" method="post">
-						<input type="hidden" name="email" th:value="${user.email}" />
-						<input type="hidden" name="postId" th:value="${post.id}" />
-						<button type="submit">❤️ Like</button>
-						<span th:text="${likeService.countLikes(post)} + ' Likes'"></span>
+					    <input type="hidden" name="email" th:value="${user.email}" />
+					    <input type="hidden" name="postId" th:value="${post.id}" />
+					    <input type="hidden" name="redirectPage" value="feed" />
+					    <button type="submit">❤️ Like</button>
+					    <span th:text="${likeService.countLikes(post)} + ' Likes'"></span>
 					</form>
 				</div>
+
+				<!-- Comment Form -->
+				<form th:action="@{/comments/add}" method="post" class="comment-form">
+				    <input type="hidden" name="email" th:value="${user.email}" />
+				    <input type="hidden" name="postId" th:value="${post.id}" />
+				    <input type="hidden" name="redirectPage" value="feed" />
+				    <input type="text" name="text" placeholder="Add a comment..." required />
+				    <button type="submit">Comment</button>
+				</form>
+
+				<!-- Show Comments -->
 				<div class="comments">
 					<p><b>Comments:</b></p>
 					<div th:each="comment : ${commentService.getComments(post)}">
-						<p><b th:text="${comment.user.name}"></b>: <span th:text="${comment.text}"></span></p>
+						<p>
+							<b th:text="${comment.user.name}"></b>:
+							<span th:text="${comment.text}"></span>
+							<small style="color:gray;"
+								th:text="${#temporals.format(comment.createdAt, 'dd-MM-yyyy HH:mm')}"></small>
+						</p>
 					</div>
 				</div>
 			</div>

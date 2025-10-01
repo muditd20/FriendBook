@@ -9,6 +9,8 @@ import com.friendbook.model.Post;
 import com.friendbook.model.User;
 import com.friendbook.repository.LikeRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class LikeService {
 
@@ -18,20 +20,21 @@ public class LikeService {
 		this.likeRepository = likeRepository;
 	}
 
-	public boolean toogleLike(User user, Post post) {
-		Optional<Like> existing = likeRepository.findByUserAndPost(user, post);
-		if (existing.isPresent()) {
-			likeRepository.delete(existing.get());
-			return false; // unlike
-		} else {
-			Like like = new Like();
-			like.setUser(user);
-			like.setPost(post);
-			likeRepository.save(like);
-			return true;
-		}
-	}
-	
+	   // Toggle like (like/unlike)
+    @Transactional
+    public void toggleLike(User user, Post post) {
+        Optional<Like> existingLike = likeRepository.findByUserAndPost(user, post);
+        if (existingLike.isPresent()) {
+            // Already liked → remove
+            likeRepository.delete(existingLike.get());
+        } else {
+            // Not liked → add
+            Like like = new Like();
+            like.setUser(user);
+            like.setPost(post);
+            likeRepository.save(like);
+        }
+    }	
 	public long countLikes(Post post)
 	{
 		return likeRepository.countByPost(post);
