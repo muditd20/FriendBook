@@ -162,12 +162,28 @@
 				<!-- 💬 Comments Section -->
 				<div class="comments">
 					<p><b>Comments:</b></p>
-					<div th:each="comment : ${commentService.getComments(post)}" class="comment">
-						<p>
+					<div th:each="comment : ${commentService.getComments(post)}" class="comment"
+						style="display: flex; justify-content: space-between; align-items: center; margin: 5px 0; padding: 5px; border-bottom: 1px solid #eee;">
+
+						<!-- Left Side: Comment text -->
+						<span>
 							<b th:text="${comment.user.name}"></b>:
 							<span th:text="${comment.text}"></span>
-						</p>
+						</span>
+
+						<!-- Right Side: Delete icon (only visible to post owner) -->
+						<form th:if="${post.user.id == user.id}" th:action="@{/comments/delete}" method="post"
+							style="margin: 0;">
+							<input type="hidden" name="email" th:value="${user.email}" />
+							<input type="hidden" name="commentId" th:value="${comment.id}" />
+							<input type="hidden" name="redirectPage" value="dashboard" />
+							<button type="submit"
+								style="border: none; background: none; cursor: pointer; color: red; font-size: 16px;">
+								🗑
+							</button>
+						</form>
 					</div>
+
 
 					<form th:action="@{/comments/add}" method="post" class="comment-form">
 						<input type="hidden" name="email" th:value="${user.email}" />

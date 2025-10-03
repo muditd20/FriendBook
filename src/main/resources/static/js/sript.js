@@ -68,3 +68,22 @@ function ConfirmUpdate()
 	return confirm("Are you sure to update your post?");
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+      document.querySelectorAll(".delete-comment").forEach(dot => {
+          dot.addEventListener("click", function () {
+              const commentId = this.getAttribute("data-id");
+
+              fetch("/comments/delete/" + commentId, {
+                  method: "DELETE"
+              })
+              .then(res => {
+                  if (res.ok) {
+                      this.closest(".comment").remove(); // Remove from UI
+                  } else {
+                      alert("Failed to delete comment");
+                  }
+              })
+              .catch(() => alert("Error deleting comment"));
+          });
+      });
+  });
