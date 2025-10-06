@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,8 +22,8 @@ public class UserService {
 	private UserRepository userRepository;
 
 	@Autowired
-	private PasswordEncoder passwordEncoder;
-
+	private BCryptPasswordEncoder passwordEncoder;
+	
 	public User register(RegisterRequest request) {
 		if (userRepository.findByEmail(request.getEmail()).isPresent()) {
 			throw new RuntimeException("Email already exists!");
