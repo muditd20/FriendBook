@@ -70,12 +70,11 @@
 
 				<form th:action="@{/user/uploadPhoto}" method="post" enctype="multipart/form-data">
 					<input type="hidden" name="email" th:value="${user.email}" />
-					<input type="file" name="photo" required />
+					<input type="file" name="photo" accept="image/*" required />
 					<button type="submit" class="btn">Upload</button>
 				</form>
 
 				<p th:if="${uploadError != null}" th:text="${uploadError}" class="error"></p>
-				<p th:if="${message != null}" th:text="${message}" class="success"></p>
 
 				<!-- ✅ Followers / Following info -->
 				<div class="follow-info">
@@ -100,16 +99,26 @@
 		<hr />
 
 		<!-- 📝 Create Post -->
+		<!-- 📝 Create Post -->
 		<div class="create-post-card">
-			<h3>Create a Post</h3>
+			<div class="create-post-header">
+				<img th:if="${user.profilePhoto != null}" th:src="@{'/uploads/' + ${user.profilePhoto}}"
+					alt="Profile Photo" class="create-post-user-pic" />
+				<p th:if="${user.profilePhoto == null}" class="no-photo-mini">👤</p>
+				<span class="create-post-username" th:text="${user.name}"></span>
+			</div>
+
 			<form th:action="@{/posts/create}" method="post" enctype="multipart/form-data" class="create-post-form">
 				<input type="hidden" name="email" th:value="${user.email}" />
+
 				<textarea name="caption" placeholder="What's on your mind?" required></textarea>
-				<div class="upload-section">
+
+				<div class="create-post-actions">
 					<label for="imageUpload" class="upload-label">📷 Add Photo </label>
-					<input id="imageUpload" type="file" name="image" accept="image/*" required hidden />
+					<input id="imageUpload" type="file" name="image" accept="image/*" hidden />
+
+					<button type="submit" class="btn-post">Post</button>
 				</div>
-				<button type="submit" class="btn-post">Post</button>
 			</form>
 		</div>
 
@@ -185,12 +194,19 @@
 					</div>
 
 
-					<form th:action="@{/comments/add}" method="post" class="comment-form">
+					<form th:action="@{/comments/add}" method="post" class="comment-form"
+						style="display: flex; align-items: center; gap: 10px; margin-top: 5px;">
 						<input type="hidden" name="email" th:value="${user.email}" />
 						<input type="hidden" name="postId" th:value="${post.id}" />
 						<input type="hidden" name="redirectPage" value="dashboard" />
-						<input type="text" name="text" placeholder="Add a comment..." required />
-						<button type="submit">Comment</button>
+
+						<input type="text" name="text" placeholder="Add a comment..." required
+							style="flex: 1; padding: 5px;" />
+
+						<button type="submit"
+							style="padding: 6px 12px; background-color: #1f2937; color: white; border: none; border-radius: 4px; cursor: pointer;">
+							Comment
+						</button>
 					</form>
 				</div>
 			</div>

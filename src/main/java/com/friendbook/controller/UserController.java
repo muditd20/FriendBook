@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.friendbook.model.Post;
 import com.friendbook.model.User;
@@ -64,30 +65,39 @@ public class UserController {
 
 	@PostMapping("/uploadPhoto")
 	public String uploadPhoto(@RequestParam("photo") MultipartFile file, @RequestParam("email") String email,
-			Model model) {
+			RedirectAttributes redirectAttributes) {
 		try {
 			User user = userService.findByEmail(email);
 			if (user == null) {
-				model.addAttribute("uploadError", "User not found!");
-				return "dashboard";
+				redirectAttributes.addFlashAttribute("uploadError", "User not found!");
+				return "redirect:/user/dashboard?email=" + email;
 			}
+
+			// Upload directory
 			String uploadDir = new File("src/main/resources/static/uploads").getAbsolutePath();
 			File uploadFolder = new File(uploadDir);
 			if (!uploadFolder.exists()) {
 				uploadFolder.mkdirs();
 			}
+
+			// Generate unique filename
 			String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
 			Path filePath = Paths.get(uploadDir, fileName);
 			file.transferTo(filePath.toFile());
+
+			// Save to user
 			user.setProfilePhoto(fileName);
 			userService.save(user);
-			model.addAttribute("message", "File uploaded successfully!");
-			model.addAttribute("user", user);
-			model.addAttribute("posts", postService.getUserPosts(user));
+
+			// 🔹 Success message removed to avoid showing "File uploaded successfully"
+			// Optional: you can use redirectAttributes.addFlashAttribute("message", "Photo
+			// updated!");
 		} catch (Exception e) {
-			model.addAttribute("uploadError", "File upload failed: " + e.getMessage());
+			redirectAttributes.addFlashAttribute("uploadError", "File upload failed: " + e.getMessage());
 		}
-		return "dashboard";
+
+		// Redirect to dashboard to avoid template parsing error
+		return "redirect:/user/dashboard?email=" + email;
 	}
 
 	@GetMapping("/search")

@@ -30,6 +30,7 @@ public class Comment {
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
+
 	public Long getId() {
 		return id;
 	}

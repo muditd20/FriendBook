@@ -87,3 +87,33 @@ document.addEventListener("DOMContentLoaded", function () {
           });
       });
   });
+
+  
+  document.addEventListener("DOMContentLoaded", function () {
+      // Profile photo validation
+      const profileInput = document.querySelector("input[name='photo']");
+      if (profileInput) {
+          profileInput.addEventListener("change", function () {
+              validateFile(this);
+          });
+      }
+
+      // Post image validation
+      const postInput = document.querySelector("input[name='image']");
+      if (postInput) {
+          postInput.addEventListener("change", function () {
+              validateFile(this);
+          });
+      }
+
+      function validateFile(input) {
+          const file = input.files[0];
+          if (!file) return;
+
+          const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+          if (!allowedTypes.includes(file.type)) {
+              alert("❌ Only JPG, JPEG, PNG files are allowed!");
+              input.value = ""; // clear file input
+          }
+      }
+  });

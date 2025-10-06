@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.friendbook.model.User;
 import com.friendbook.service.PostService;
@@ -43,12 +44,23 @@ public class PostController {
 	}
 
 	@PostMapping("/update")
-	public String updatePost(@RequestParam("postId") Long postId,
-	                         @RequestParam("email") String email,
-	                         @RequestParam("caption") String caption,
-	                         @RequestParam(value = "image", required = false) MultipartFile image) {
-	    postService.updatePost(postId, caption, image);
-	    return "redirect:/user/dashboard?email=" + email;
+	public String updatePost(@RequestParam("postId") Long postId, @RequestParam("email") String email,
+			@RequestParam("caption") String caption,
+			@RequestParam(value = "image", required = false) MultipartFile image) {
+		postService.updatePost(postId, caption, image);
+		return "redirect:/user/dashboard?email=" + email;
+	}
+
+	@PostMapping("/posts/delete")
+	public String deletePost(@RequestParam("postId") Long postId, @RequestParam("email") String email,
+			RedirectAttributes redirectAttributes) {
+		try {
+			postService.deletePost(postId);
+		} catch (Exception e) {
+			// TODO: handle exception
+			redirectAttributes.addFlashAttribute("error", "Cannot delete post: " + e.getMessage());
+		}
+		return "redirect:/user/dashboard?email=" + email;
 	}
 
 }

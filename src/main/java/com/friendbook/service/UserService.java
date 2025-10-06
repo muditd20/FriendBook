@@ -65,33 +65,37 @@ public class UserService {
 	}
 
 	public String uploadProfilePhoto(User user, MultipartFile file) {
-		if (file.isEmpty()) {
-			throw new RuntimeException("Please select a file to upload!");
-		}
+	    if (file.isEmpty()) {
+	        throw new RuntimeException("Please select photo to upload!");
+	    }
 
-		try {
-			// Create upload directory if not exists
-			String uploadDir = "uploads/";
-			File dir = new File(uploadDir);
-			if (!dir.exists()) {
-				dir.mkdirs();
-			}
+	    // ✅ File type validation
+	    String contentType = file.getContentType();
+	    if (contentType == null || 
+	       !(contentType.equals("image/jpeg") || contentType.equals("image/png"))) {
+	        throw new RuntimeException("Only JPG and PNG images are allowed!");
+	    }
 
-			// Generate unique filename
-			String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-			String filePath = uploadDir + fileName;
+	    try {
+	        String uploadDir = "uploads/";
+	        File dir = new File(uploadDir);
+	        if (!dir.exists()) {
+	            dir.mkdirs();
+	        }
 
-			// Save file to disk
-			file.transferTo(new File(filePath));
+	        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+	        String filePath = uploadDir + fileName;
 
-			// Update user profile photo
-			user.setProfilePhoto(fileName);
-			userRepository.save(user);
+	        file.transferTo(new File(filePath));
 
-			return fileName;
+	        user.setProfilePhoto(fileName);
+	        userRepository.save(user);
 
-		} catch (IOException e) {
-			throw new RuntimeException("File upload failed: " + e.getMessage());
-		}
+	        return fileName;
+
+	    } catch (IOException e) {
+	        throw new RuntimeException("File upload failed: " + e.getMessage());
+	    }
 	}
+
 }
