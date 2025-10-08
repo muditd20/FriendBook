@@ -1,6 +1,10 @@
 package com.friendbook.controller;
 
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,20 +28,19 @@ public class LikeController {
 		this.postService = postService;
 		this.likeService = likeService;
 	}
-	
-	   @PostMapping("/toggle")
-	    public String toggleLike(@RequestParam("email") String email,
-	                             @RequestParam("postId") Long postId,
-	                             @RequestParam("redirectPage") String redirectPage) {
 
-	        User user = userService.findByEmail(email);
-	        Post post = postService.findById(postId);
-	        likeService.toggleLike(user, post);
+	@PostMapping("/toggle")
+	public String toggleLike(@RequestParam("email") String email, @RequestParam("postId") Long postId,
+			@RequestParam("redirectPage") String redirectPage) {
 
-	        if ("feed".equalsIgnoreCase(redirectPage)) {
-	            return "redirect:/user/feed?email=" + email;
-	        } else {
-	            return "redirect:/user/dashboard?email=" + email;
-	        }
-	    }
+		User user = userService.findByEmail(email);
+		Post post = postService.findById(postId);
+		likeService.toggleLike(user, post);
+
+		if ("feed".equalsIgnoreCase(redirectPage)) {
+			return "redirect:/user/feed?email=" + email;
+		} else {
+			return "redirect:/user/dashboard?email=" + email;
+		}
+	}
 }

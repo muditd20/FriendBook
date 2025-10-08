@@ -23,7 +23,7 @@ public class UserService {
 
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
-	
+
 	public User register(RegisterRequest request) {
 		if (userRepository.findByEmail(request.getEmail()).isPresent()) {
 			throw new RuntimeException("Email already exists!");
@@ -65,37 +65,36 @@ public class UserService {
 	}
 
 	public String uploadProfilePhoto(User user, MultipartFile file) {
-	    if (file.isEmpty()) {
-	        throw new RuntimeException("Please select photo to upload!");
-	    }
+		if (file.isEmpty()) {
+			throw new RuntimeException("Please select photo to upload!");
+		}
 
-	    // ✅ File type validation
-	    String contentType = file.getContentType();
-	    if (contentType == null || 
-	       !(contentType.equals("image/jpeg") || contentType.equals("image/png"))) {
-	        throw new RuntimeException("Only JPG and PNG images are allowed!");
-	    }
+		// ✅ File type validation
+		String contentType = file.getContentType();
+		if (contentType == null || !(contentType.equals("image/jpeg") || contentType.equals("image/png"))) {
+			throw new RuntimeException("Only JPG and PNG images are allowed!");
+		}
 
-	    try {
-	        String uploadDir = "uploads/";
-	        File dir = new File(uploadDir);
-	        if (!dir.exists()) {
-	            dir.mkdirs();
-	        }
+		try {
+			String uploadDir = "uploads/";
+			File dir = new File(uploadDir);
+			if (!dir.exists()) {
+				dir.mkdirs();
+			}
 
-	        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-	        String filePath = uploadDir + fileName;
+			String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+			String filePath = uploadDir + fileName;
 
-	        file.transferTo(new File(filePath));
+			file.transferTo(new File(filePath));
 
-	        user.setProfilePhoto(fileName);
-	        userRepository.save(user);
+			user.setProfilePhoto(fileName);
+			userRepository.save(user);
 
-	        return fileName;
+			return fileName;
 
-	    } catch (IOException e) {
-	        throw new RuntimeException("File upload failed: " + e.getMessage());
-	    }
+		} catch (IOException e) {
+			throw new RuntimeException("File upload failed: " + e.getMessage());
+		}
 	}
 
 }

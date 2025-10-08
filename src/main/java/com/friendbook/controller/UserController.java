@@ -51,6 +51,7 @@ public class UserController {
 		if (user == null) {
 			return "redirect:/auth/login";
 		}
+
 		List<Post> posts = postService.getUserPosts(user);
 		model.addAttribute("user", user);
 		model.addAttribute("posts", posts);
@@ -58,8 +59,10 @@ public class UserController {
 		model.addAttribute("commentService", commentService);
 		model.addAttribute("followersCount", followRequestService.countFollowers(user));
 		model.addAttribute("followingCount", followRequestService.countFollowing(user));
+
 		List<FollowRequest> pendingRequests = followRequestService.getPendingRequests(user);
 		model.addAttribute("pendingRequests", pendingRequests);
+
 		return "dashboard";
 	}
 
@@ -89,9 +92,9 @@ public class UserController {
 			user.setProfilePhoto(fileName);
 			userService.save(user);
 
-			// 🔹 Success message removed to avoid showing "File uploaded successfully"
-			// Optional: you can use redirectAttributes.addFlashAttribute("message", "Photo
-			// updated!");
+			// Success message removed to avoid showing "File uploaded successfully"
+			// Optional: redirectAttributes.addFlashAttribute("message", "Photo updated!");
+
 		} catch (Exception e) {
 			redirectAttributes.addFlashAttribute("uploadError", "File upload failed: " + e.getMessage());
 		}
@@ -107,27 +110,31 @@ public class UserController {
 		if (currentUser == null) {
 			return "redirect:/auth/login";
 		}
+
 		List<User> searchResults = (keyword == null || keyword.isEmpty()) ? List.of()
 				: userService.searchUsers(keyword);
 
-		// ✅ Set alreadyFollowing for each user
+		// Set alreadyFollowing for each user
 		searchResults.forEach(u -> u.setAlreadyFollowing(followRequestService.isFollowing(currentUser, u)));
 
 		model.addAttribute("currentUser", currentUser);
 		model.addAttribute("searchResults", searchResults);
 		model.addAttribute("keyword", keyword);
+
 		return "search-users";
 	}
 
-	// view pending requests page
+	// View pending requests page
 	@GetMapping("/requests")
 	public String viewRequests(@RequestParam("email") String email, Model model) {
 		User user = userService.findByEmail(email);
 		if (user == null)
 			return "redirect:/auth/login";
+
 		List<FollowRequest> pendingRequests = followRequestService.getPendingRequests(user);
 		model.addAttribute("user", user);
 		model.addAttribute("pendingRequests", pendingRequests);
+
 		return "follow-requests";
 	}
 
@@ -137,10 +144,8 @@ public class UserController {
 		if (user == null)
 			return "redirect:/auth/login";
 
-		// Pending follow requests
 		List<FollowRequest> pendingRequests = followRequestService.getPendingRequests(user);
 
-		// Follow-back notifications
 		List<Notification> followBacks = notificationService.getNotifications(user);
 		followBacks.forEach(n -> {
 			if (n.getMessage().contains("::FOLLOW_BACK::")) {
@@ -163,7 +168,6 @@ public class UserController {
 		if (actingUser != null) {
 			User sender = followRequestService.acceptRequest(requestId, actingUser);
 			if (sender != null) {
-				// ✅ Notification create for follow-back
 				notificationService.createFollowBackNotification(actingUser, sender);
 			}
 		}
@@ -187,15 +191,27 @@ public class UserController {
 
 		if (currentUser != null && targetUser != null && !currentUser.getId().equals(targetUser.getId())) {
 			if (Boolean.TRUE.equals(isFollowBack)) {
-				// ✅ Direct follow-back
 				followRequestService.followBack(currentUser, targetUser);
-				// sirf iss target user ka follow-back notification remove karo
 				notificationService.clearFollowBackNotification(currentUser, targetUser.getId());
 			} else {
-				// ✅ Normal request
 				followRequestService.sendRequest(currentUser, targetUser);
 			}
 		}
 		return "redirect:/user/notifications?email=" + email;
+	}
+
+	@PostMapping("/unfollow")
+	public String unfollowUser(@RequestParam("email") String email, @RequestParam("targetId") Long targetId) {
+		User currentUser = userService.findByEmail(email);
+		User targetUser = userService.findById(targetId);
+
+		if (currentUser != null && targetUser != null) {
+			boolean unfollowed = followRequestService.unfollow(currentUser, targetUser);
+			if (unfollowed) {
+				notificationService.clearFollowBackNotification(currentUser, targetUser.getId());
+			}
+		}
+
+		return "redirect:/user/search?email=" + email;
 	}
 }

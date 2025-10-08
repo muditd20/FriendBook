@@ -6,42 +6,65 @@
 //import org.springframework.web.bind.annotation.RequestParam;
 //
 //import com.friendbook.model.User;
-//import com.friendbook.service.FollowService;
+//import com.friendbook.service.FollowRequestService;
+//import com.friendbook.service.NotificationService;
 //import com.friendbook.service.UserService;
 //
 //@Controller
 //@RequestMapping("/follow")
 //public class FollowController {
 //
-//	private final FollowService followService;
 //	private final UserService userService;
+//	private final FollowRequestService followRequestService;
+//	private final NotificationService notificationService;
 //
-//	public FollowController(FollowService followService, UserService userService) {
-//		this.followService = followService;
+//	public FollowController(UserService userService, FollowRequestService followRequestService,
+//			NotificationService notificationService) {
 //		this.userService = userService;
+//		this.followRequestService = followRequestService;
+//		this.notificationService = notificationService;
 //	}
 //
-//	@PostMapping("/do")
-//	public String followUser(@RequestParam("email") String email, @RequestParam("targetID") Long targetID) {
-//		User follower = userService.findByEmail(email);
-//		User following = userService.findById(targetID);
-//
-//		if (follower != null && following != null && !follower.getId().equals(following.getId())) {
-//			followService.followUser(follower, following);
+//	@PostMapping("/follow-requests/accept")
+//	public String acceptFollowRequest(@RequestParam("requestId") Long requestId, @RequestParam("email") String email) {
+//		User actingUser = userService.findByEmail(email);
+//		if (actingUser != null) {
+//			User sender = followRequestService.acceptRequest(requestId, actingUser);
+//			if (sender != null) {
+//				// ✅ Notification create for follow-back
+//				notificationService.createFollowBackNotification(actingUser, sender);
+//			}
 //		}
-//		return "redirect:/user/dashboard?email=" + email;
+//		return "redirect:/user/notifications?email=" + email;
 //	}
 //
-//	public String unfollowUser(@RequestParam("email") String email, @RequestParam("targetId") Long targetId) {
-//		
-//		User follower = userService.findByEmail(email);
-//		User following = userService.findById(targetId);
-//		
-//		if(follower !=null && following !=null && !follower.getId().equals(following.getId()))
-//		{
-//			followService.unfollowUser(follower, following);
+//	@PostMapping("/follow-requests/reject")
+//	public String rejectFollowRequest(@RequestParam("requestId") Long requestId, @RequestParam("email") String email) {
+//		User actingUser = userService.findByEmail(email);
+//		if (actingUser != null) {
+//			followRequestService.rejectRequest(requestId, actingUser);
 //		}
-//		return "redirect:/user/dashboard?email=" + email;
+//		return "redirect:/user/notifications?email=" + email;
+//	}
+//
+//	@PostMapping("/follow-toggle")
+//	public String toggleFollow(@RequestParam("email") String email, @RequestParam("targetId") Long targetId,
+//			@RequestParam(value = "isFollowBack", required = false) Boolean isFollowBack) {
+//		User currentUser = userService.findByEmail(email);
+//		User targetUser = userService.findById(targetId);
+//
+//		if (currentUser != null && targetUser != null && !currentUser.getId().equals(targetUser.getId())) {
+//			if (Boolean.TRUE.equals(isFollowBack)) {
+//				// ✅ Direct follow-back
+//				followRequestService.followBack(currentUser, targetUser);
+//				// sirf iss target user ka follow-back notification remove karo
+//				notificationService.clearFollowBackNotification(currentUser, targetUser.getId());
+//			} else {
+//				// ✅ Normal request
+//				followRequestService.sendRequest(currentUser, targetUser);
+//			}
+//		}
+//		return "redirect:/user/notifications?email=" + email;
 //	}
 //
 //}
