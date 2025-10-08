@@ -62,10 +62,9 @@ public class AuthController {
 		if (registered != null) {
 			model.addAttribute("message", "Registration successful. Please login.");
 		}
-		return "login"; // templates/login.html
+		return "login";
 	}
 
-	// login submit (manual authentication)
 	@PostMapping("/login")
 	public String loginSubmit(@Valid @ModelAttribute("loginRequest") LoginRequest request, BindingResult bindingResult,
 			Model model, HttpSession session) {
@@ -76,10 +75,8 @@ public class AuthController {
 		try {
 			User user = userService.login(request);
 
-			// store something in session for later pages (optional but useful)
 			session.setAttribute("loggedInUser", user.getEmail());
 
-			// redirect to dashboard including email param (dashboard expects it)
 			String encodedEmail = URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8);
 			return "redirect:/user/dashboard?email=" + encodedEmail;
 
@@ -93,6 +90,5 @@ public class AuthController {
 	public String home() {
 		return "index";
 	}
-	
 
 }

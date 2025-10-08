@@ -40,6 +40,4 @@ public class CommentService {
 	public void deleteComment(Comment comment) {
 		commentRepository.delete(comment);
 	}
-	
-
 }

@@ -17,11 +17,9 @@ public interface FollowRequestRepository extends JpaRepository<FollowRequest, Lo
 
 	List<FollowRequest> findByReceiverAndStatus(User receiver, FollowRequest.Status status);
 
-	// ✅ For counts
 	long countByReceiverAndStatus(User receiver, FollowRequest.Status status);
 
 	long countBySenderAndStatus(User sender, FollowRequest.Status status);
 
-	// ✅ Fix: Add this method used in FollowRequestService
 	List<FollowRequest> findBySenderAndStatus(User sender, FollowRequest.Status status);
 }

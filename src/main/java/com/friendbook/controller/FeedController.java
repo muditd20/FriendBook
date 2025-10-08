@@ -42,11 +42,10 @@ public class FeedController {
 			return "redirect:/auth/login";
 		}
 
-		// ✅ Get feed posts from PostService
 		List<Post> feedPosts = postService.getFeedPosts(currentUser, followRequestService);
 
 		model.addAttribute("user", currentUser);
-		model.addAttribute("posts", feedPosts); 
+		model.addAttribute("posts", feedPosts);
 		model.addAttribute("likeService", likeService);
 		model.addAttribute("commentService", commentService);
 

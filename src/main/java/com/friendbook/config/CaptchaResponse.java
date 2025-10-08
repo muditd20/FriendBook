@@ -10,7 +10,6 @@ public class CaptchaResponse {
 
     private String hostname;
 
-    // optionally there is "error-codes" array; include if you want
     public boolean isSuccess() {
         return success;
     }

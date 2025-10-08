@@ -22,15 +22,15 @@ public class LikeService {
 		this.likeRepository = likeRepository;
 	}
 
-	// Toggle like (like/unlike)
+	// Toggle (like/unlike)
 	@Transactional
 	public void toggleLike(User user, Post post) {
 		Optional<Like> existingLike = likeRepository.findByUserAndPost(user, post);
 		if (existingLike.isPresent()) {
-			// Already liked → remove
+
 			likeRepository.delete(existingLike.get());
 		} else {
-			// Not liked → add
+
 			Like like = new Like();
 			like.setUser(user);
 			like.setPost(post);
@@ -41,7 +41,5 @@ public class LikeService {
 	public long countLikes(Post post) {
 		return likeRepository.countByPost(post);
 	}
-
-
 
 }

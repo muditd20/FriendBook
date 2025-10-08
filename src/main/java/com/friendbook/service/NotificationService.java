@@ -14,7 +14,6 @@ public class NotificationService {
         this.repo = repo;
     }
 
-    // Follow-back notification create karega
     public void createFollowBackNotification(User receiver, User targetUser) {
         // Check agar already notification exist hai toh dobara na banao
         List<Notification> existing = repo.findByReceiverOrderByCreatedAtDesc(receiver);

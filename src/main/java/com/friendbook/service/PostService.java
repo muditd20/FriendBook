@@ -87,7 +87,6 @@ public class PostService {
 				post.setImagePath("posts/" + fileName);
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
 			throw new RuntimeException("Failed to update post: " + e.getMessage());
 		}
 		return postRepository.save(post);
@@ -96,7 +95,7 @@ public class PostService {
 	public List<Post> getFeedPosts(User currentUser, FollowRequestService followRequestService) {
 		List<User> followingUsers = followRequestService.getFollowingUsers(currentUser);
 		if (followingUsers.isEmpty()) {
-			return List.of(); // No following, empty feed
+			return List.of();
 		}
 		return postRepository.findByUserInOrderByCreatedAtDesc(followingUsers);
 	}
@@ -107,7 +106,5 @@ public class PostService {
 			postRepository.delete(optionalPost.get());
 		}
 	}
-	
-	
 
 }

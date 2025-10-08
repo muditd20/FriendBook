@@ -83,23 +83,18 @@ public class UserController {
 				uploadFolder.mkdirs();
 			}
 
-			// Generate unique filename
+			// filename unique generate karne ke liye
 			String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
 			Path filePath = Paths.get(uploadDir, fileName);
 			file.transferTo(filePath.toFile());
 
-			// Save to user
 			user.setProfilePhoto(fileName);
 			userService.save(user);
-
-			// Success message removed to avoid showing "File uploaded successfully"
-			// Optional: redirectAttributes.addFlashAttribute("message", "Photo updated!");
 
 		} catch (Exception e) {
 			redirectAttributes.addFlashAttribute("uploadError", "File upload failed: " + e.getMessage());
 		}
 
-		// Redirect to dashboard to avoid template parsing error
 		return "redirect:/user/dashboard?email=" + email;
 	}
 
@@ -114,7 +109,6 @@ public class UserController {
 		List<User> searchResults = (keyword == null || keyword.isEmpty()) ? List.of()
 				: userService.searchUsers(keyword);
 
-		// Set alreadyFollowing for each user
 		searchResults.forEach(u -> u.setAlreadyFollowing(followRequestService.isFollowing(currentUser, u)));
 
 		model.addAttribute("currentUser", currentUser);
@@ -124,7 +118,6 @@ public class UserController {
 		return "search-users";
 	}
 
-	// View pending requests page
 	@GetMapping("/requests")
 	public String viewRequests(@RequestParam("email") String email, Model model) {
 		User user = userService.findByEmail(email);

@@ -17,7 +17,6 @@ public class FollowRequestService {
 		this.repo = repo;
 	}
 
-	// Send new follow request (allow resend if previously rejected)
 	public void sendRequest(User sender, User receiver) {
 		if (sender.getId().equals(receiver.getId()))
 			return;
@@ -27,7 +26,6 @@ public class FollowRequestService {
 			if (existing.getStatus() == FollowRequest.Status.ACCEPTED
 					|| existing.getStatus() == FollowRequest.Status.PENDING)
 				return;
-			// Previously rejected, allow resend
 			existing.setStatus(FollowRequest.Status.PENDING);
 			repo.save(existing);
 			return;
@@ -40,7 +38,6 @@ public class FollowRequestService {
 		repo.save(req);
 	}
 
-	// Direct follow without pending (used for Follow Back)
 	public void followBack(User sender, User receiver) {
 		if (sender.getId().equals(receiver.getId()))
 			return;
@@ -58,7 +55,6 @@ public class FollowRequestService {
 		repo.save(existing);
 	}
 
-	// Accept follow request (return sender user instead of boolean)
 	public User acceptRequest(Long requestId, User actingUser) {
 		Optional<FollowRequest> opt = repo.findById(requestId);
 		if (opt.isPresent()) {
@@ -72,7 +68,6 @@ public class FollowRequestService {
 		return null;
 	}
 
-	// Reject follow request
 	public boolean rejectRequest(Long requestId, User actingUser) {
 		Optional<FollowRequest> opt = repo.findById(requestId);
 		if (opt.isPresent()) {
@@ -86,23 +81,20 @@ public class FollowRequestService {
 		return false;
 	}
 
-	// Get all pending requests for a user
+	// saari pending request ke liye
 	public List<FollowRequest> getPendingRequests(User receiver) {
 		return repo.findByReceiverAndStatus(receiver, FollowRequest.Status.PENDING);
 	}
 
-	// Check if already following
 	public boolean isFollowing(User sender, User receiver) {
 		FollowRequest fr = repo.findBySenderAndReceiver(sender, receiver);
 		return fr != null && fr.getStatus() == FollowRequest.Status.ACCEPTED;
 	}
 
-	// Count followers (who accepted currentUser’s request)
 	public long countFollowers(User user) {
 		return repo.countByReceiverAndStatus(user, FollowRequest.Status.ACCEPTED);
 	}
 
-	// Count following (requests sent by currentUser and accepted)
 	public long countFollowing(User user) {
 		return repo.countBySenderAndStatus(user, FollowRequest.Status.ACCEPTED);
 	}
@@ -115,13 +107,12 @@ public class FollowRequestService {
 		return repo.findBySenderAndStatus(user, FollowRequest.Status.ACCEPTED).stream().map(FollowRequest::getReceiver)
 				.toList();
 	}
-	
-	public boolean unfollow(User sender,User receiver)
-	{
-		if(sender ==null || receiver==null)return false;
+
+	public boolean unfollow(User sender, User receiver) {
+		if (sender == null || receiver == null)
+			return false;
 		FollowRequest existing = repo.findBySenderAndReceiver(sender, receiver);
-		if(existing !=null && existing.getStatus()==FollowRequest.Status.ACCEPTED)
-		{
+		if (existing != null && existing.getStatus() == FollowRequest.Status.ACCEPTED) {
 			repo.delete(existing);
 			return true;
 		}

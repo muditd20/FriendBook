@@ -19,7 +19,7 @@ public class User {
 
 	private String profilePhoto;
 
-	// 🟢 Transient field to track follow status
+	//  Transient field banayi taaki hum follow request ko track kar sake
 	@Transient
 	private boolean alreadyFollowing;
 

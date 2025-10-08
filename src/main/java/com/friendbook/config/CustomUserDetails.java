@@ -9,11 +9,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.friendbook.model.User;
 
-public class CustomUserDetails implements UserDetails{
+public class CustomUserDetails implements UserDetails {
 
-	
 	private User user;
-	
+
 	public CustomUserDetails(User user) {
 		super();
 		this.user = user;
@@ -22,19 +21,17 @@ public class CustomUserDetails implements UserDetails{
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(null);
-	return List.of(simpleGrantedAuthority);
+		return List.of(simpleGrantedAuthority);
 	}
 
 	@Override
 	public String getPassword() {
-		// TODO Auto-generated method stub
 		return user.getPassword();
 	}
 
 	@Override
 	public String getUsername() {
-		// TODO Auto-generated method stub
 		return user.getEmail();
 	}
-  
+
 }
