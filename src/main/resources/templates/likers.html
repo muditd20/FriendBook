@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Likers - FriendBook</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <style>
+        .liker-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .liker-card img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1.5px solid #4CAF50;
+        }
+
+        .back-btn {
+            margin: 15px 0;
+            display: inline-block;
+            padding: 6px 14px;
+            background-color: #2563eb;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+        }
+        .back-btn:hover {
+            background-color: #1d4ed8;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <h2>Likers for Post:</h2>
+        <p th:text="${post.caption}"></p>
+
+        <a th:href="@{/user/dashboard(email=${post.user.email})}" class="back-btn">← Back to Dashboard</a>
+
+        <div class="likers-list">
+            <div th:each="liker : ${likers}" class="liker-card">
+                <img th:if="${liker.profilePhoto != null}" th:src="@{'/uploads/' + ${liker.profilePhoto}}" alt="Profile Pic">
+                <img th:if="${liker.profilePhoto == null}" src="/default-avatar.png" alt="Profile Pic">
+
+                <span th:text="${liker.name}"></span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

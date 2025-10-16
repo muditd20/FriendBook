@@ -5,6 +5,8 @@ import com.friendbook.dto.LoginRequest;
 import com.friendbook.dto.RegisterRequest;
 import com.friendbook.model.User;
 import com.friendbook.service.UserService;
+
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,6 +91,16 @@ public class AuthController {
 	@GetMapping("/")
 	public String home() {
 		return "index";
+	}
+
+	@GetMapping("/logout")
+	public String logout(HttpServletRequest request) {
+		HttpSession session = request.getSession(false);
+		if (session != null) {
+			session.invalidate();
+		}
+		return "redirect:/auth/login";
+
 	}
 
 }
