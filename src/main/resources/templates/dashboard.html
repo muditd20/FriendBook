@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8" />
-    <title>Dashboard - FriendBook</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}" />
-    <script th:src="@{/js/script.js}"></script>
-    <link rel="icon" href="data:," />
+	<meta charset="UTF-8" />
+	<title>Dashboard - FriendBook</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}" />
+	<script th:src="@{/js/script.js}"></script>
+	<link rel="icon" href="data:," />
 	<style>
-		/* Navbar aligned with dashboard container */
 		.navbar {
 			display: flex;
 			justify-content: space-between;
@@ -35,138 +35,214 @@
 			display: flex;
 			align-items: center;
 		}
+
+		/* Create Post Button & Section */
+		#create-post-section {
+			display: none;
+			margin-top: 20px;
+			border: 1px solid #ddd;
+			padding: 15px;
+			border-radius: 10px;
+			background-color: #f9f9f9;
+		}
+
+		.btn-toggle {
+			display: inline-block;
+			margin: 20px 0 0 0;
+			padding: 10px 20px;
+			background-color: #1f2937;
+			color: white;
+			border: none;
+			border-radius: 8px;
+			cursor: pointer;
+			font-size: 16px;
+			transition: background-color 0.3s ease;
+		}
+
+		.btn-toggle:hover {
+			background-color: #374151;
+		}
+
+		.create-post-form textarea {
+			width: 100%;
+			resize: vertical;
+			padding: 8px;
+			margin-bottom: 10px;
+			border-radius: 5px;
+			border: 1px solid #ccc;
+		}
+
+		.btn-post {
+			padding: 8px 16px;
+			background-color: #1f2937;
+			color: white;
+			border: none;
+			border-radius: 6px;
+			cursor: pointer;
+			transition: background-color 0.3s ease;
+		}
+
+		.btn-post:hover {
+			background-color: #374151;
+		}
 	</style>
 </head>
+
 <body>
-<div class="dashboard-container">
-    <div class="navbar">
-        <div class="nav-left">
-            <a th:href="@{/user/dashboard(email=${user.email})}">Home</a>
-            <a th:href="@{/user/notifications(email=${user.email})}">Notifications</a>
-            <a th:href="@{/user/search(email=${user.email})}">Search</a>
-            <a th:href="@{/user/feed(email=${user.email})}">Feed</a>
-			<a href="#" onclick="confirmLogout()">Logout</a>
+	<div class="dashboard-container">
+		<div class="navbar">
+			<div class="nav-left">
+				<a th:href="@{/user/dashboard(email=${user.email})}">Home</a>
+				<a th:href="@{/user/notifications(email=${user.email})}">Notifications</a>
+				<a th:href="@{/user/search(email=${user.email})}">Search</a>
+				<a th:href="@{/user/feed(email=${user.email})}">Feed</a>
+				<a href="#" onclick="confirmLogout()">Logout</a>
+			</div>
+			<div class="nav-right">
+				<span th:text="${user.name}"></span>
+			</div>
+		</div>
 
-        </div>
-        <div class="nav-right">
-            <span th:text="${user.name}"></span>
-        </div>
-    </div>
+		<!-- Profile Section -->
+		<div class="profile-header">
+			<div class="profile-pic-container">
+				<img th:if="${user.profilePhoto != null}" th:src="@{'/uploads/' + ${user.profilePhoto}}"
+					alt="Profile Photo" class="profile-pic" />
+				<p th:if="${user.profilePhoto == null}" class="no-photo">No profile photo uploaded.</p>
+			</div>
+			<div class="profile-info">
+				<h2 th:text="${user.name}"></h2>
+				<p th:text="${user.email}"></p>
+				<form th:action="@{/user/uploadPhoto}" method="post" enctype="multipart/form-data">
+					<input type="hidden" name="email" th:value="${user.email}" />
+					<input type="file" name="photo" accept="image/*" required />
+					<button type="submit" class="btn">Upload</button>
+				</form>
+				<p th:if="${uploadError != null}" th:text="${uploadError}" class="error"></p>
+				<div class="follow-info">
+					<span th:text="${followersCount}">0</span> Followers
+					<span th:text="${followingCount}">0</span> Following
+				</div>
+			</div>
+		</div>
 
-    <!-- 👤 Profile Section -->
-    <div class="profile-header">
-        <div class="profile-pic-container">
-            <img th:if="${user.profilePhoto != null}" th:src="@{'/uploads/' + ${user.profilePhoto}}" alt="Profile Photo" class="profile-pic" />
-            <p th:if="${user.profilePhoto == null}" class="no-photo">No profile photo uploaded.</p>
-        </div>
-        <div class="profile-info">
-            <h2 th:text="${user.name}"></h2>
-            <p th:text="${user.email}"></p>
-            <form th:action="@{/user/uploadPhoto}" method="post" enctype="multipart/form-data">
-                <input type="hidden" name="email" th:value="${user.email}" />
-                <input type="file" name="photo" accept="image/*" required />
-                <button type="submit" class="btn">Upload</button>
-            </form>
-            <p th:if="${uploadError != null}" th:text="${uploadError}" class="error"></p>
-            <div class="follow-info">
-                <span th:text="${followersCount}">0</span> Followers
-                <span th:text="${followingCount}">0</span> Following
-            </div>
-            <form th:if="${target != null}" th:action="${followRequestService.isFollowing(user,target)} ? @{/follow/undo} : @{/follow/do}" method="post">
-                <input type="hidden" name="email" th:value="${user.email}" />
-                <input type="hidden" name="targetId" th:value="${target.id}" />
-                <button type="submit" class="btn" th:text="${followRequestService.isFollowing(user,target)} ? 'Unfollow' : (followRequestService.getPendingRequests(target).contains(user) ? 'Requested' : 'Follow')"> Follow </button>
-            </form>
-        </div>
-    </div>
+		<hr />
 
-    <hr />
+		<!-- Create Post Button -->
+		<div style="text-align: left; margin-top: 10px;">
+			<button style="background-color: #1f2937;" class="btn-create-post" onclick="toggleCreatePost()">Create
+				Post</button>
+		</div>
 
-    <!-- 📝 Create Post -->
-    <div class="create-post-card">
-        <div class="create-post-header">
-            <img th:if="${user.profilePhoto != null}" th:src="@{'/uploads/' + ${user.profilePhoto}}" alt="Profile Photo" class="create-post-user-pic" />
-            <p th:if="${user.profilePhoto == null}" class="no-photo-mini">👤</p>
-            <span class="create-post-username" th:text="${user.name}"></span>
-        </div>
-        <form th:action="@{/posts/create}" method="post" enctype="multipart/form-data" class="create-post-form">
-            <input type="hidden" name="email" th:value="${user.email}" />
-            <textarea name="caption" placeholder="What's on your mind?" required></textarea>
-            <div class="create-post-actions">
-                <label for="imageUpload" class="upload-label">📷 Add Photo </label>
-                <input id="imageUpload" type="file" name="image" accept="image/*" hidden />
-                <button type="submit" class="btn-post">Post</button>
-            </div>
-        </form>
-    </div>
+		<!-- Create Post Section -->
+		<div id="create-post-section">
+			<div class="create-post-card">
+				<div class="create-post-header">
+					<img th:if="${user.profilePhoto != null}" th:src="@{'/uploads/' + ${user.profilePhoto}}"
+						alt="Profile Photo" class="create-post-user-pic" />
+					<p th:if="${user.profilePhoto == null}" class="no-photo-mini">👤</p>
+					<span class="create-post-username" th:text="${user.name}"></span>
+				</div>
+				<form th:action="@{/posts/create}" method="post" enctype="multipart/form-data" class="create-post-form">
+					<input type="hidden" name="email" th:value="${user.email}" />
+					<textarea name="caption" placeholder="What's on your mind?" required></textarea>
+					<div class="create-post-actions">
+						<label for="imageUpload" class="upload-label">📷 Add Photo</label>
+						<input id="imageUpload" type="file" name="image" accept="image/*" hidden />
+						<button type="submit" class="btn-post">Post</button>
+					</div>
+				</form>
+			</div>
+		</div>
 
-    <hr />
+		<hr />
 
-    <!-- 📌 User Posts -->
-    <h3>Your Posts</h3>
-    <div class="posts">
-        <div th:each="post : ${posts}" class="post-card">
-            <div class="post-header">
-                <img th:if="${user.profilePhoto != null}" th:src="@{'/uploads/' + ${user.profilePhoto}}" alt="Profile Photo" class="post-user-pic" />
-                <div class="post-user-info">
-                    <h4 th:text="${user.name}"></h4>
-                    <p class="post-date">
-                        <i th:text="${#temporals.format(post.createdAt, 'dd-MM-yyyy HH:mm')}"></i>
-                    </p>
-                </div>
-                <div class="post-options">
-                    <span class="dots">⋮</span>
-                    <div class="dropdown-menu">
-                        <form th:action="@{/posts/delete}" method="post" class="delete-form" onsubmit="return confirmDelete();">
-                            <input type="hidden" name="postId" th:value="${post.id}" />
-                            <input type="hidden" name="email" th:value="${user.email}" />
-                            <button type="submit" class="delete-btn">Delete</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <p class="post-caption" th:text="${post.caption}"></p>
-            <img th:if="${post.imagePath != null}" th:src="@{'/uploads/' + ${post.imagePath}}" alt="Post Image" class="post-img" />
-            <div class="post-actions">
-                <form th:action="@{/likes/toggle}" method="post">
-                    <input type="hidden" name="email" th:value="${user.email}" />
-                    <input type="hidden" name="postId" th:value="${post.id}" />
-                    <input type="hidden" name="redirectPage" value="dashboard" />
-                    <button type="submit">❤️ Like</button>
-                    <span th:text="${likeService.countLikes(post)} + ' Likes'"></span>
-                </form>
-            </div>
-            <div class="comments">
-                <p><b>Comments:</b></p>
-                <div th:each="comment : ${commentService.getComments(post)}" class="comment" style="display: flex; justify-content: space-between; align-items: center; margin: 5px 0; padding: 5px; border-bottom: 1px solid #eee;">
-                    <span>
-                        <b th:text="${comment.user.name}"></b>: <span th:text="${comment.text}"></span>
-                    </span>
-                    <form th:if="${post.user.id == user.id}" th:action="@{/comments/delete}" method="post" style="margin: 0;">
-                        <input type="hidden" name="email" th:value="${user.email}" />
-                        <input type="hidden" name="commentId" th:value="${comment.id}" />
-                        <input type="hidden" name="redirectPage" value="dashboard" />
-                        <button type="submit" style="border: none; background: none; cursor: pointer; color: red; font-size: 16px;"> 🗑 </button>
-                    </form>
-                </div>
-                <form th:action="@{/comments/add}" method="post" class="comment-form" style="display: flex; align-items: center; gap: 10px; margin-top: 5px;">
-                    <input type="hidden" name="email" th:value="${user.email}" />
-                    <input type="hidden" name="postId" th:value="${post.id}" />
-                    <input type="hidden" name="redirectPage" value="dashboard" />
-                    <input type="text" name="text" placeholder="Add a comment..." required style="flex: 1; padding: 5px;" />
-                    <button type="submit" style="padding: 6px 12px; background-color: #1f2937; color: white; border: none; border-radius: 4px; cursor: pointer;"> Comment </button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+		<!-- User Posts -->
+		<h3>Your Posts</h3>
+		<div class="posts">
+			<div th:each="post : ${posts}" class="post-card">
+				<div class="post-header">
+					<img th:if="${user.profilePhoto != null}" th:src="@{'/uploads/' + ${user.profilePhoto}}"
+						alt="Profile Photo" class="post-user-pic" />
+					<div class="post-user-info">
+						<h4 th:text="${user.name}"></h4>
+						<p class="post-date">
+							<i th:text="${#temporals.format(post.createdAt, 'dd-MM-yyyy HH:mm')}"></i>
+						</p>
+					</div>
+					<div class="post-options">
+						<span class="dots">⋮</span>
+						<div class="dropdown-menu">
+							<form th:action="@{/posts/delete}" method="post" class="delete-form"
+								onsubmit="return confirmDelete();">
+								<input type="hidden" name="postId" th:value="${post.id}" />
+								<input type="hidden" name="email" th:value="${user.email}" />
+								<button type="submit" class="delete-btn">Delete</button>
+							</form>
+						</div>
+					</div>
+				</div>
+				<p class="post-caption" th:text="${post.caption}"></p>
+				<img th:if="${post.imagePath != null}" th:src="@{'/uploads/' + ${post.imagePath}}" alt="Post Image"
+					class="post-img" />
+				<div class="post-actions">
+					<form th:action="@{/likes/toggle}" method="post">
+						<input type="hidden" name="email" th:value="${user.email}" />
+						<input type="hidden" name="postId" th:value="${post.id}" />
+						<input type="hidden" name="redirectPage" value="dashboard" />
+						<button type="submit">❤️ Like</button>
+						<span th:text="${likeService.countLikes(post)} + ' Likes'"></span>
+					</form>
+				</div>
+				<div class="comments">
+					<p><b>Comments:</b></p>
+					<div th:each="comment : ${commentService.getComments(post)}" class="comment"
+						style="display: flex; justify-content: space-between; align-items: center; margin: 5px 0; padding: 5px; border-bottom: 1px solid #eee;">
+						<span>
+							<b th:text="${comment.user.name}"></b>: <span th:text="${comment.text}"></span>
+						</span>
+						<form th:if="${post.user.id == user.id}" th:action="@{/comments/delete}" method="post"
+							style="margin: 0;">
+							<input type="hidden" name="email" th:value="${user.email}" />
+							<input type="hidden" name="commentId" th:value="${comment.id}" />
+							<input type="hidden" name="redirectPage" value="dashboard" />
+							<button type="submit"
+								style="border: none; background: none; cursor: pointer; color: red; font-size: 16px;">
+								🗑 </button>
+						</form>
+					</div>
+					<form th:action="@{/comments/add}" method="post" class="comment-form"
+						style="display: flex; align-items: center; gap: 10px; margin-top: 5px;">
+						<input type="hidden" name="email" th:value="${user.email}" />
+						<input type="hidden" name="postId" th:value="${post.id}" />
+						<input type="hidden" name="redirectPage" value="dashboard" />
+						<input type="text" name="text" placeholder="Add a comment..." required
+							style="flex: 1; padding: 5px;" />
+						<button type="submit"
+							style="padding: 6px 12px; background-color: #1f2937; color: white; border: none; border-radius: 4px; cursor: pointer;">
+							Comment </button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
 
-<script>
-    function confirmLogout() {
-        if (confirm("Are you sure you want to logout?")) {
-            window.location.href = "/auth/logout";
-        }
-    }
-</script>
+	<script>
+		function confirmLogout() {
+			if (confirm("Are you sure you want to logout?")) {
+				window.location.href = "/auth/logout";
+			}
+		}
+
+		function toggleCreatePost() {
+			const section = document.getElementById("create-post-section");
+			section.style.display = section.style.display === "none" ? "block" : "none";
+		}
+
+		function confirmDelete() {
+			return confirm("Are you sure you want to delete this post?");
+		}
+	</script>
 </body>
+
 </html>
