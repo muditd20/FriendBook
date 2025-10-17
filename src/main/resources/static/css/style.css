@@ -463,6 +463,31 @@ button:hover {
          color: gray;
          font-size: 12px;
      }
+
+	 /* Favorite fields styling */
+	 .fav-input {
+	     width: 50%; /* Half width */
+	     padding: 5px 8px;
+	     font-size: 14px;
+	     border-radius: 5px;
+	     border: 1px solid #ccc;
+	 }
+
+	 .favorite-fields {
+	     margin-bottom: 20px;
+	 }
+
+	 .favorite-fields div {
+	     display: flex;
+	     align-items: center;
+	     gap: 10px;
+	     margin-bottom: 10px;
+	 }
+
+	 .favorite-fields .btn-post {
+	     padding: 6px 12px;
+	     font-size: 14px;
+	 }
 	 
 	 
 	 

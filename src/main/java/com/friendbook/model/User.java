@@ -19,9 +19,41 @@ public class User {
 
 	private String profilePhoto;
 
-	//  Transient field banayi taaki hum follow request ko track kar sake
 	@Transient
 	private boolean alreadyFollowing;
+
+	@Column(length = 500)
+	private String favSong;
+
+	@Column(length = 500)
+	private String favBooks;
+
+	@Column(length = 500)
+	private String favPlaces;
+
+	public String getFavSong() {
+		return favSong;
+	}
+
+	public void setFavSong(String favSong) {
+		this.favSong = favSong;
+	}
+
+	public String getFavBooks() {
+		return favBooks;
+	}
+
+	public void setFavBooks(String favBooks) {
+		this.favBooks = favBooks;
+	}
+
+	public String getFavPlaces() {
+		return favPlaces;
+	}
+
+	public void setFavPlaces(String favPlaces) {
+		this.favPlaces = favPlaces;
+	}
 
 	public Long getId() {
 		return id;
@@ -70,16 +102,16 @@ public class User {
 	public void setAlreadyFollowing(boolean alreadyFollowing) {
 		this.alreadyFollowing = alreadyFollowing;
 	}
+
 	@Transient
 	private boolean requested = false;
 
-
 	public boolean isRequested() {
-	    return requested;
+		return requested;
 	}
 
 	public void setRequested(boolean requested) {
-	    this.requested = requested;
+		this.requested = requested;
 	}
 
 }

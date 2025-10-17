@@ -97,4 +97,24 @@ public class UserService {
 		}
 	}
 
+	public void saveFavorite(User user, String type, String value) {
+		switch (type) {
+		case "song":
+			user.setFavSong(value);
+			break;
+
+		case "books":
+			user.setFavBooks(value);
+			break;
+
+		case "places":
+			user.setFavPlaces(value);
+			break;
+
+		default:
+			throw new RuntimeException("Invalid favorite type");
+		}
+		userRepository.save(user);
+	}
+
 }

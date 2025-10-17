@@ -100,30 +100,32 @@ public class UserController {
 
 	@GetMapping("/search")
 	public String searchPage(@RequestParam(value = "keyword", required = false) String keyword,
-	        @RequestParam("email") String email, Model model) {
-	    User currentUser = userService.findByEmail(email);
-	    if (currentUser == null) return "redirect:/auth/login";
+			@RequestParam("email") String email, Model model) {
+		User currentUser = userService.findByEmail(email);
+		if (currentUser == null)
+			return "redirect:/auth/login";
 
-	    List<User> searchResults = (keyword == null || keyword.isEmpty()) ? List.of() : userService.searchUsers(keyword);
+		List<User> searchResults = (keyword == null || keyword.isEmpty()) ? List.of()
+				: userService.searchUsers(keyword);
 
-	    searchResults.forEach(u -> {
-	        if (followRequestService.isFollowing(currentUser, u)) {
-	            u.setAlreadyFollowing(true);
-	            u.setRequested(false);
-	        } else if (followRequestService.isRequested(currentUser, u)) {
-	            u.setAlreadyFollowing(false);
-	            u.setRequested(true); 
-	        } else {
-	            u.setAlreadyFollowing(false);
-	            u.setRequested(false); 
-	        }
-	    });
+		searchResults.forEach(u -> {
+			if (followRequestService.isFollowing(currentUser, u)) {
+				u.setAlreadyFollowing(true);
+				u.setRequested(false);
+			} else if (followRequestService.isRequested(currentUser, u)) {
+				u.setAlreadyFollowing(false);
+				u.setRequested(true);
+			} else {
+				u.setAlreadyFollowing(false);
+				u.setRequested(false);
+			}
+		});
 
-	    model.addAttribute("currentUser", currentUser);
-	    model.addAttribute("searchResults", searchResults);
-	    model.addAttribute("keyword", keyword);
+		model.addAttribute("currentUser", currentUser);
+		model.addAttribute("searchResults", searchResults);
+		model.addAttribute("keyword", keyword);
 
-	    return "search-users";
+		return "search-users";
 	}
 
 	@GetMapping("/requests")
@@ -186,35 +188,49 @@ public class UserController {
 
 	@PostMapping("/follow-toggle")
 	public String toggleFollow(@RequestParam("email") String email, @RequestParam("targetId") Long targetId,
-	                           @RequestParam(value = "isFollowBack", required = false) Boolean isFollowBack,
-	                           @RequestParam(value = "withdraw", required = false) Boolean withdraw) {
-	    User currentUser = userService.findByEmail(email);
-	    User targetUser = userService.findById(targetId);
+			@RequestParam(value = "isFollowBack", required = false) Boolean isFollowBack,
+			@RequestParam(value = "withdraw", required = false) Boolean withdraw) {
+		User currentUser = userService.findByEmail(email);
+		User targetUser = userService.findById(targetId);
 
-	    if (currentUser != null && targetUser != null && !currentUser.getId().equals(targetUser.getId())) {
-	        if (Boolean.TRUE.equals(isFollowBack)) {
-	            followRequestService.followBack(currentUser, targetUser);
-	            notificationService.clearFollowBackNotification(currentUser, targetUser.getId());
-	        } else if (Boolean.TRUE.equals(withdraw)) {
-	            boolean withdrawn = followRequestService.withdrawRequest(currentUser, targetUser);
-	            if (withdrawn) notificationService.clearFollowBackNotification(targetUser, currentUser.getId());
-	        } else {
-	            followRequestService.sendRequest(currentUser, targetUser);
-	        }
-	    }
+		if (currentUser != null && targetUser != null && !currentUser.getId().equals(targetUser.getId())) {
+			if (Boolean.TRUE.equals(isFollowBack)) {
+				followRequestService.followBack(currentUser, targetUser);
+				notificationService.clearFollowBackNotification(currentUser, targetUser.getId());
+			} else if (Boolean.TRUE.equals(withdraw)) {
+				boolean withdrawn = followRequestService.withdrawRequest(currentUser, targetUser);
+				if (withdrawn)
+					notificationService.clearFollowBackNotification(targetUser, currentUser.getId());
+			} else {
+				followRequestService.sendRequest(currentUser, targetUser);
+			}
+		}
 
-	    return "redirect:/user/search?email=" + email;
+		return "redirect:/user/search?email=" + email;
 	}
 
 	@PostMapping("/unfollow")
 	public String unfollowUser(@RequestParam("email") String email, @RequestParam("targetId") Long targetId) {
-	    User currentUser = userService.findByEmail(email);
-	    User targetUser = userService.findById(targetId);
+		User currentUser = userService.findByEmail(email);
+		User targetUser = userService.findById(targetId);
 
-	    if (currentUser != null && targetUser != null) {
-	        boolean unfollowed = followRequestService.unfollow(currentUser, targetUser);
-	        if (unfollowed) notificationService.clearFollowBackNotification(currentUser, targetUser.getId());
-	    }
+		if (currentUser != null && targetUser != null) {
+			boolean unfollowed = followRequestService.unfollow(currentUser, targetUser);
+			if (unfollowed)
+				notificationService.clearFollowBackNotification(currentUser, targetUser.getId());
+		}
 
-	    return "redirect:/user/search?email=" + email;
-	}}
+		return "redirect:/user/search?email=" + email;
+	}
+
+	@PostMapping("/saveFavorite")
+	public String saveFavorite(@RequestParam("email") String email, @RequestParam("type") String type,
+			@RequestParam("value") String value) {
+		User user = userService.findByEmail(email);
+		if (user != null) {
+			userService.saveFavorite(user, type, value);
+		}
+		return "redirect:/user/dashboard?email=" + email;
+	}
+
+}
