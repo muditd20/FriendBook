@@ -70,4 +70,16 @@ public class User {
 	public void setAlreadyFollowing(boolean alreadyFollowing) {
 		this.alreadyFollowing = alreadyFollowing;
 	}
+	@Transient
+	private boolean requested = false;
+
+
+	public boolean isRequested() {
+	    return requested;
+	}
+
+	public void setRequested(boolean requested) {
+	    this.requested = requested;
+	}
+
 }

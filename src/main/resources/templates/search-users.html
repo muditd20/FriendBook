@@ -80,24 +80,31 @@
                         </div>
                     </div>
 
-                    <!-- Follow/Unfollow Button -->
-                    <div style="margin-top:10px;">
-                        <!-- Follow Button -->
-                        <form th:if="${!user.alreadyFollowing}" th:action="@{/user/follow-toggle}" method="post"
-                            style="display:inline;">
-                            <input type="hidden" name="email" th:value="${currentUser.email}" />
-                            <input type="hidden" name="targetId" th:value="${user.id}" />
-                            <button type="submit" class="btn">Follow</button>
-                        </form>
+					<!-- Follow/Unfollow/Requested Button -->
+					<div style="margin-top:10px;">
+					    <!-- Following Button -->
+					    <form th:if="${user.alreadyFollowing}" th:action="@{/user/unfollow}" method="post" style="display:inline;">
+					        <input type="hidden" name="email" th:value="${currentUser.email}" />
+					        <input type="hidden" name="targetId" th:value="${user.id}" />
+					        <button type="submit" class="btn btn-unfollow">Following</button>
+					    </form>
 
-                        <!-- Unfollow Button -->
-                        <form th:if="${user.alreadyFollowing}" th:action="@{/user/unfollow}" method="post"
-                            style="display:inline;">
-                            <input type="hidden" name="email" th:value="${currentUser.email}" />
-                            <input type="hidden" name="targetId" th:value="${user.id}" />
-                            <button type="submit" class="btn btn-unfollow">Unfollow</button>
-                        </form>
-                    </div>
+					    <!-- Requested Button -->
+					    <form th:if="${user.requested}" th:action="@{/user/follow-toggle}" method="post" style="display:inline;">
+					        <input type="hidden" name="email" th:value="${currentUser.email}" />
+					        <input type="hidden" name="targetId" th:value="${user.id}" />
+					        <input type="hidden" name="withdraw" value="true" />
+					        <button type="submit" class="btn btn-requested">Requested</button>
+					    </form>
+
+					    <!-- Follow Button -->
+					    <form th:if="${!user.alreadyFollowing and !user.requested}" th:action="@{/user/follow-toggle}" method="post"
+					        style="display:inline;">
+					        <input type="hidden" name="email" th:value="${currentUser.email}" />
+					        <input type="hidden" name="targetId" th:value="${user.id}" />
+					        <button type="submit" class="btn">Follow</button>
+					    </form>
+					</div>
 
                 </div>
             </div>
