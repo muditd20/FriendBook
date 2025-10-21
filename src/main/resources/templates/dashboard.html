@@ -8,6 +8,7 @@
     <script th:src="@{/js/script.js}"></script>
     <link rel="icon" href="data:," />
     <style>
+        /* Navbar */
         .navbar {
             display: flex;
             justify-content: space-between;
@@ -36,7 +37,86 @@
             align-items: center;
         }
 
-        /* Create Post Button & Section */
+        /* Profile Section */
+        .profile-header {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .profile-pic-container img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .profile-info h2 {
+            margin: 0;
+        }
+
+        .follow-info {
+            margin-top: 10px;
+        }
+
+        .follow-info span {
+            cursor: pointer;
+            margin-right: 15px;
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        .follow-info span:hover {
+            text-decoration: underline;
+        }
+
+        /* Followers/Following Modal */
+        #follow-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        #follow-modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            width: 400px;
+            max-height: 80%;
+            overflow-y: auto;
+        }
+
+        #follow-modal-content h3 {
+            margin-top: 0;
+        }
+
+        .follow-user {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .follow-user:last-child {
+            border-bottom: none;
+        }
+
+        .btn-close-modal {
+            cursor: pointer;
+            color: red;
+            float: right;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* Create Post */
         #create-post-section {
             display: none;
             margin-top: 20px;
@@ -46,7 +126,7 @@
             background-color: #f9f9f9;
         }
 
-        .btn-toggle {
+        .btn-create-post {
             display: inline-block;
             margin: 20px 0 0 0;
             padding: 10px 20px;
@@ -59,7 +139,7 @@
             transition: background-color 0.3s ease;
         }
 
-        .btn-toggle:hover {
+        .btn-create-post:hover {
             background-color: #374151;
         }
 
@@ -85,11 +165,56 @@
         .btn-post:hover {
             background-color: #374151;
         }
+
+        /* Comments & Posts */
+        .posts {
+            margin-top: 20px;
+        }
+
+        .post-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            background-color: #fff;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .post-user-pic,
+        .create-post-user-pic {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .comment-form input[type="text"] {
+            flex: 1;
+            padding: 5px;
+        }
+
+        .favorite-fields {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .fav-input {
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
     </style>
 </head>
 
 <body>
     <div class="dashboard-container">
+        <!-- Navbar -->
         <div class="navbar">
             <div class="nav-left">
                 <a th:href="@{/user/dashboard(email=${user.email})}">Home</a>
@@ -119,14 +244,33 @@
                     <button type="submit" class="btn">Upload</button>
                 </form>
                 <p th:if="${uploadError != null}" th:text="${uploadError}" class="error"></p>
+
+                <!-- Followers / Following -->
                 <div class="follow-info">
-                    <span th:text="${followersCount}">0</span> Followers
-                    <span th:text="${followingCount}">0</span> Following
+                    <span onclick="showFollowers()" th:text="${followersCount} + ' Followers'">0 Followers</span>
+                    <span onclick="showFollowing()" th:text="${followingCount} + ' Following'">0 Following</span>
                 </div>
             </div>
         </div>
 
-        <hr />
+		<!-- Followers / Following Modal -->
+		    <div id="follow-modal">
+		        <div id="follow-modal-content">
+		            <span class="btn-close-modal" onclick="closeFollowModal()">×</span>
+		            <h3 id="follow-modal-title">Followers</h3>
+		            <div id="follow-modal-list">
+		                <!-- Followers -->
+		                <div th:each="fUser : ${followersList}" class="follow-user follower-item" style="display: none;">
+		                    <span th:text="${fUser.name}"></span>
+		                </div>
+		                <!-- Following -->
+		                <div th:each="fUser : ${followingList}" class="follow-user following-item" style="display: none;">
+		                    <span th:text="${fUser.name}"></span>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+			        <hr />
 
         <!-- Favorite Fields -->
         <div class="favorite-fields">
@@ -165,13 +309,10 @@
             </div>
         </div>
 
-        <!-- Create Post Button -->
+        <!-- Create Post -->
         <div style="text-align: left; margin-top: 10px;">
-            <button style="background-color: #1f2937;" class="btn-create-post" onclick="toggleCreatePost()">Create
-                Post</button>
+            <button class="btn-create-post" onclick="toggleCreatePost()">Create Post</button>
         </div>
-
-        <!-- Create Post Section -->
         <div id="create-post-section">
             <div class="create-post-card">
                 <div class="create-post-header">
@@ -180,7 +321,8 @@
                     <p th:if="${user.profilePhoto == null}" class="no-photo-mini">👤</p>
                     <span class="create-post-username" th:text="${user.name}"></span>
                 </div>
-                <form th:action="@{/posts/create}" method="post" enctype="multipart/form-data" class="create-post-form">
+                <form th:action="@{/posts/create}" method="post" enctype="multipart/form-data"
+                    class="create-post-form">
                     <input type="hidden" name="email" th:value="${user.email}" />
                     <textarea name="caption" placeholder="What's on your mind?" required></textarea>
                     <div class="create-post-actions">
@@ -278,6 +420,27 @@
 
         function confirmDelete() {
             return confirm("Are you sure you want to delete this post?");
+        }
+
+
+		function showFollowers() {
+		     document.getElementById("follow-modal-title").textContent = "Followers";
+		     document.getElementById("follow-modal").style.display = "flex";
+
+		     document.querySelectorAll(".follower-item").forEach(e => e.style.display = "block");
+		     document.querySelectorAll(".following-item").forEach(e => e.style.display = "none");
+		 }
+
+		function showFollowing() {
+		        document.getElementById("follow-modal-title").textContent = "Following";
+		        document.getElementById("follow-modal").style.display = "flex";
+
+		        document.querySelectorAll(".follower-item").forEach(e => e.style.display = "none");
+		        document.querySelectorAll(".following-item").forEach(e => e.style.display = "block");
+		    }
+
+        function closeFollowModal() {
+            document.getElementById("follow-modal").style.display = "none";
         }
     </script>
 </body>

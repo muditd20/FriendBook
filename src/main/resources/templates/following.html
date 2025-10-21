@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Following - FriendBook</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+    <h1 th:text="'Users followed by ' + ${user.name}"></h1>
+    <a th:href="@{/user/dashboard(email=${user.email})}">Back to Dashboard</a>
+    <ul>
+        <li th:each="f : ${following}">
+            <img th:src="@{'/uploads/' + ${f.profilePhoto}}" alt="Profile" width="50" height="50"/>
+            <span th:text="${f.name}"></span>
+        </li>
+    </ul>
+</body>
+</html>

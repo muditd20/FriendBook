@@ -58,7 +58,7 @@ public class FollowRequestService {
             if (!request.getReceiver().getId().equals(actingUser.getId())) return null;
             request.setStatus(FollowRequest.Status.ACCEPTED);
             repo.save(request);
-            return request.getSender(); // Return the sender user
+            return request.getSender();
         }
         return null;
     }
@@ -83,7 +83,7 @@ public class FollowRequestService {
         FollowRequest fr = repo.findBySenderAndReceiver(sender, receiver);
         return fr != null && fr.getStatus() == FollowRequest.Status.ACCEPTED;
     }
-    
+
     public boolean isRequested(User sender, User receiver) {
         FollowRequest fr = repo.findBySenderAndReceiver(sender, receiver);
         return fr != null && fr.getStatus() == FollowRequest.Status.PENDING;
@@ -102,8 +102,17 @@ public class FollowRequestService {
     }
 
     public List<User> getFollowingUsers(User user) {
-        return repo.findBySenderAndStatus(user, FollowRequest.Status.ACCEPTED).stream().map(FollowRequest::getReceiver)
-                .toList();
+        return repo.findBySenderAndStatus(user, FollowRequest.Status.ACCEPTED)
+                   .stream()
+                   .map(FollowRequest::getReceiver)
+                   .toList();
+    }
+
+    public List<User> getFollowers(User user) {
+        return repo.findByReceiverAndStatus(user, FollowRequest.Status.ACCEPTED)
+                   .stream()
+                   .map(FollowRequest::getSender)
+                   .toList();
     }
 
     public boolean unfollow(User sender, User receiver) {
@@ -115,7 +124,7 @@ public class FollowRequestService {
         }
         return false;
     }
-    
+
     public boolean withdrawRequest(User sender, User receiver) {
         FollowRequest existing = repo.findBySenderAndReceiver(sender, receiver);
         if (existing != null && existing.getStatus() == FollowRequest.Status.PENDING) {

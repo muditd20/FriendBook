@@ -488,6 +488,146 @@ button:hover {
 	     padding: 6px 12px;
 	     font-size: 14px;
 	 }
-	 
+
+	 /* Followers/Following Modal */
+	 #follow-modal {
+	     display: none;
+	     position: fixed;
+	     top: 0;
+	     left: 0;
+	     width: 100%;
+	     height: 100%;
+	     background-color: rgba(0, 0, 0, 0.6);
+	     justify-content: center;
+	     align-items: center;
+	     z-index: 1000;
+	 }
+
+	 #follow-modal-content {
+	     background-color: #fff;
+	     padding: 20px;
+	     border-radius: 10px;
+	     width: 400px;
+	     max-height: 80%;
+	     overflow-y: auto;
+	 }
+
+	 #follow-modal-content h3 {
+	     margin-top: 0;
+	 }
+
+	 .follow-user {
+	     display: flex;
+	     justify-content: space-between;
+	     padding: 5px 0;
+	     border-bottom: 1px solid #eee;
+	 }
+
+	 .follow-user:last-child {
+	     border-bottom: none;
+	 }
+
+	 .btn-close-modal {
+	     cursor: pointer;
+	     color: red;
+	     float: right;
+	     font-size: 20px;
+	     font-weight: bold;
+	 }
+
+	 /* Create Post */
+	 #create-post-section {
+	     display: none;
+	     margin-top: 20px;
+	     border: 1px solid #ddd;
+	     padding: 15px;
+	     border-radius: 10px;
+	     background-color: #f9f9f9;
+	 }
+
+	 .btn-create-post {
+	     display: inline-block;
+	     margin: 20px 0 0 0;
+	     padding: 10px 20px;
+	     background-color: #1f2937;
+	     color: white;
+	     border: none;
+	     border-radius: 8px;
+	     cursor: pointer;
+	     font-size: 16px;
+	     transition: background-color 0.3s ease;
+	 }
+
+	 .btn-create-post:hover {
+	     background-color: #374151;
+	 }
+
+	 .create-post-form textarea {
+	     width: 100%;
+	     resize: vertical;
+	     padding: 8px;
+	     margin-bottom: 10px;
+	     border-radius: 5px;
+	     border: 1px solid #ccc;
+	 }
+
+	 .btn-post {
+	     padding: 8px 16px;
+	     background-color: #1f2937;
+	     color: white;
+	     border: none;
+	     border-radius: 6px;
+	     cursor: pointer;
+	     transition: background-color 0.3s ease;
+	 }
+
+	 .btn-post:hover {
+	     background-color: #374151;
+	 }
+
+	 /* Comments & Posts */
+	 .posts {
+	     margin-top: 20px;
+	 }
+
+	 .post-card {
+	     border: 1px solid #ddd;
+	     padding: 15px;
+	     border-radius: 10px;
+	     margin-bottom: 20px;
+	     background-color: #fff;
+	 }
+
+	 .post-header {
+	     display: flex;
+	     align-items: center;
+	     justify-content: space-between;
+	 }
+
+	 .post-user-pic,
+	 .create-post-user-pic {
+	     width: 50px;
+	     height: 50px;
+	     border-radius: 50%;
+	     object-fit: cover;
+	 }
+
+	 .comment-form input[type="text"] {
+	     flex: 1;
+	     padding: 5px;
+	 }
+
+	 .favorite-fields {
+	     display: flex;
+	     gap: 10px;
+	     margin-bottom: 20px;
+	 }
+
+	 .fav-input {
+	     padding: 5px;
+	     border-radius: 5px;
+	     border: 1px solid #ccc;
+	 }
+ 
 	 
 	 
