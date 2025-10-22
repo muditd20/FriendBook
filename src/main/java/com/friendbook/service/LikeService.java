@@ -22,7 +22,6 @@ public class LikeService {
 		this.likeRepository = likeRepository;
 	}
 
-	// Toggle (like/unlike)
 	@Transactional
 	public void toggleLike(User user, Post post) {
 		Optional<Like> existingLike = likeRepository.findByUserAndPost(user, post);

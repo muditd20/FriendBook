@@ -1,6 +1,5 @@
 package com.friendbook.controller;
 
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,7 +56,6 @@ public class PostController {
 		try {
 			postService.deletePost(postId);
 		} catch (Exception e) {
-			// TODO: handle exception
 			redirectAttributes.addFlashAttribute("error", "Cannot delete post: " + e.getMessage());
 		}
 		return "redirect:/user/dashboard?email=" + email;

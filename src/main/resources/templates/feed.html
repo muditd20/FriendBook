@@ -108,21 +108,21 @@
 				<div class="post-actions">
 					<!-- Like Form -->
 					<form th:action="@{/likes/toggle}" method="post">
-					    <input type="hidden" name="email" th:value="${user.email}" />
-					    <input type="hidden" name="postId" th:value="${post.id}" />
-					    <input type="hidden" name="redirectPage" value="feed" />
-					    <button type="submit">❤️ Like</button>
-					    <span th:text="${likeService.countLikes(post)} + ' Likes'"></span>
+						<input type="hidden" name="email" th:value="${user.email}" />
+						<input type="hidden" name="postId" th:value="${post.id}" />
+						<input type="hidden" name="redirectPage" value="feed" />
+						<button type="submit">❤️ Like</button>
+						<span th:text="${likeService.countLikes(post)} + ' Likes'"></span>
 					</form>
 				</div>
 
 				<!-- Comment Form -->
 				<form th:action="@{/comments/add}" method="post" class="comment-form">
-				    <input type="hidden" name="email" th:value="${user.email}" />
-				    <input type="hidden" name="postId" th:value="${post.id}" />
-				    <input type="hidden" name="redirectPage" value="feed" />
-				    <input type="text" name="text" placeholder="Add a comment..." required />
-				    <button type="submit">Comment</button>
+					<input type="hidden" name="email" th:value="${user.email}" />
+					<input type="hidden" name="postId" th:value="${post.id}" />
+					<input type="hidden" name="redirectPage" value="feed" />
+					<input type="text" name="text" placeholder="Add a comment..." required />
+					<button type="submit">Comment</button>
 				</form>
 
 				<!-- Show Comments -->
@@ -142,10 +142,11 @@
 	</div>
 </body>
 <script>
-    function confirmLogout() {
-        if (confirm("Are you sure you want to logout?")) {
-            window.location.href = "/auth/logout";
-        }
-    }
+	function confirmLogout() {
+		if (confirm("Are you sure you want to logout?")) {
+			window.location.href = "/auth/logout";
+		}
+	}
 </script>
+
 </html>

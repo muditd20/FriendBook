@@ -45,7 +45,7 @@
 				<a th:href="@{/user/notifications(email=${user.email})}">Notifications</a>
 				<a th:href="@{/user/search(email=${user.email})}">Search</a>
 				<a th:href="@{/user/feed(email=${user.email})}">Feed</a>
-				<a href="#" onclick="confirmLogout()">Logout</a> 
+				<a href="#" onclick="confirmLogout()">Logout</a>
 			</div>
 			<div class="nav-right">
 				<span th:text="${user.name}"></span>
@@ -97,10 +97,11 @@
 	</div>
 </body>
 <script>
-    function confirmLogout() {
-        if (confirm("Are you sure you want to logout?")) {
-            window.location.href = "/auth/logout";
-        }
-    }
+	function confirmLogout() {
+		if (confirm("Are you sure you want to logout?")) {
+			window.location.href = "/auth/logout";
+		}
+	}
 </script>
+
 </html>

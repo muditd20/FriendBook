@@ -19,13 +19,11 @@ public class Notification {
 	@ManyToOne
 	private User receiver;
 
-	// Transient fields for parsing follow-back
 	@Transient
 	private String messagePart1;
 	@Transient
 	private Long followBackUserId;
 
-	// ---------------- Getters & Setters ----------------
 	public Long getId() {
 		return id;
 	}

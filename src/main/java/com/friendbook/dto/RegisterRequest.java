@@ -3,20 +3,19 @@ package com.friendbook.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-
 public class RegisterRequest {
-    @NotBlank(message = "Name is required")
-    private String name;
+	@NotBlank(message = "Name is required")
+	private String name;
 
-    @NotBlank(message = "Email is required")
-    @Email(message = "Invalid email")
-    private String email;
+	@NotBlank(message = "Email is required")
+	@Email(message = "Invalid email")
+	private String email;
 
-    @NotBlank(message = "Password is required")
-    private String password;
+	@NotBlank(message = "Password is required")
+	private String password;
 
-    // token from fronted reCAPTCHA
-    private String captchaResponse;
+	// token from fronted reCAPTCHA
+	private String captchaResponse;
 
 	public String getName() {
 		return name;
@@ -49,5 +48,5 @@ public class RegisterRequest {
 	public void setCaptchaResponse(String captchaResponse) {
 		this.captchaResponse = captchaResponse;
 	}
-    
+
 }

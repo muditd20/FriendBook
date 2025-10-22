@@ -69,7 +69,6 @@ public class UserService {
 			throw new RuntimeException("Please select photo to upload!");
 		}
 
-		// ✅ File type validation
 		String contentType = file.getContentType();
 		if (contentType == null || !(contentType.equals("image/jpeg") || contentType.equals("image/png"))) {
 			throw new RuntimeException("Only JPG and PNG images are allowed!");

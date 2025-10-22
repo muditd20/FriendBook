@@ -30,7 +30,6 @@ public class PostService {
 				throw new RuntimeException("Please upload an image!");
 			}
 
-			// ✅ File type validation
 			String contentType = imageFile.getContentType();
 			if (contentType == null || !(contentType.equals("image/jpeg") || contentType.equals("image/png"))) {
 				throw new RuntimeException("Only JPG and PNG images are allowed!");

@@ -1,18 +1,21 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Followers - FriendBook</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}" />
+	<meta charset="UTF-8">
+	<title>Followers - FriendBook</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
+
 <body>
-    <h1 th:text="'Followers of ' + ${user.name}"></h1>
-    <a th:href="@{/user/dashboard(email=${user.email})}">Back to Dashboard</a>
-    <ul>
-        <li th:each="follower : ${followers}">
-            <img th:src="@{'/uploads/' + ${follower.profilePhoto}}" alt="Profile" width="50" height="50"/>
-            <span th:text="${follower.name}"></span>
-        </li>
-    </ul>
+	<h1 th:text="'Followers of ' + ${user.name}"></h1>
+	<a th:href="@{/user/dashboard(email=${user.email})}">Back to Dashboard</a>
+	<ul>
+		<li th:each="follower : ${followers}">
+			<img th:src="@{'/uploads/' + ${follower.profilePhoto}}" alt="Profile" width="50" height="50" />
+			<span th:text="${follower.name}"></span>
+		</li>
+	</ul>
 </body>
+
 </html>

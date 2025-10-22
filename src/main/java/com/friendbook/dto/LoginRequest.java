@@ -3,14 +3,13 @@ package com.friendbook.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-
 public class LoginRequest {
-    @NotBlank(message = "Email is required")
-    @Email(message = "Invalid email")
-    private String email;
+	@NotBlank(message = "Email is required")
+	@Email(message = "Invalid email")
+	private String email;
 
-    @NotBlank(message = "Password is required")
-    private String password;
+	@NotBlank(message = "Password is required")
+	private String password;
 
 	public String getEmail() {
 		return email;
@@ -27,5 +26,5 @@ public class LoginRequest {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-    
+
 }

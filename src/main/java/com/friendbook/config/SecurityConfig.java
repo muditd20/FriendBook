@@ -38,7 +38,7 @@ public class SecurityConfig {
 
 				.requestMatchers("/user/**", "/posts/**", "/likes/**", "/comments/**", "/notifications/**").permitAll()
 
-				.anyRequest().permitAll()).logout(logout -> logout.permitAll())
+				.anyRequest().authenticated()).logout(logout -> logout.permitAll())
 				.headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
 
 		return http.build();

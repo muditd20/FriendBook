@@ -5,7 +5,6 @@ body {
 	padding: 0;
 }
 
-/* ✅ Navbar */
 .navbar {
 	background-color: #3b5998;
 	color: white;
@@ -168,7 +167,6 @@ button:hover,
 	margin: 5px 0 15px;
 }
 
-/* Buttons */
 .btn,
 button {
 	background: #0095f6;
@@ -186,7 +184,6 @@ button:hover {
 	background: #0078c2;
 }
 
-/* Messages */
 .error {
 	color: #e11d48;
 	margin-top: 8px;
@@ -199,7 +196,6 @@ button:hover {
 	font-size: 13px;
 }
 
-/* Create Post - Modern UI */
 .create-post-card {
     border: 1px solid #ddd;
     border-radius: 12px;
@@ -304,7 +300,6 @@ button:hover {
     transform: translateY(-1px);
 }
 
-/* Posts Section - Compact */
 .posts {
     margin-top: 20px;
     display: grid;
@@ -371,7 +366,6 @@ button:hover {
     max-height: 230px;
 }
 
-/* Post options menu */
 .post-options {
     margin-left: auto;
     position: relative;
@@ -411,12 +405,10 @@ button:hover {
     background: #fbeaea;
 }
 
-/* Show dropdown on hover */
 .post-options:hover .dropdown-menu {
     display: block;
 }
 
-/* Like Section */
 .post-actions {
     margin-top: 8px;
     display: flex;
@@ -439,7 +431,6 @@ button:hover {
 .like-btn:hover {
     background: grey;
 }
-/* Same feel as dashboard cards */
      .notifications {
          display: flex;
          flex-direction: column;
@@ -464,7 +455,6 @@ button:hover {
          font-size: 12px;
      }
 
-	 /* Favorite fields styling */
 	 .fav-input {
 	     width: 50%; /* Half width */
 	     padding: 5px 8px;
@@ -489,7 +479,6 @@ button:hover {
 	     font-size: 14px;
 	 }
 
-	 /* Followers/Following Modal */
 	 #follow-modal {
 	     display: none;
 	     position: fixed;
@@ -535,7 +524,6 @@ button:hover {
 	     font-weight: bold;
 	 }
 
-	 /* Create Post */
 	 #create-post-section {
 	     display: none;
 	     margin-top: 20px;
@@ -585,7 +573,6 @@ button:hover {
 	     background-color: #374151;
 	 }
 
-	 /* Comments & Posts */
 	 .posts {
 	     margin-top: 20px;
 	 }
@@ -628,6 +615,3 @@ button:hover {
 	     border-radius: 5px;
 	     border: 1px solid #ccc;
 	 }
- 
-	 
-	 

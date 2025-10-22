@@ -28,7 +28,6 @@ public class AuthController {
 	@Autowired
 	private CaptchaValidator captchaValidator;
 
-	// show register page
 	@GetMapping("/register")
 	public String registerForm(Model model) {
 		model.addAttribute("registerRequest", new RegisterRequest());

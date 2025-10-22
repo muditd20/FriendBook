@@ -32,7 +32,6 @@ public class FollowRequest {
 		PENDING, ACCEPTED, REJECTED
 	}
 
-	// getters & setters
 	public Long getId() {
 		return id;
 	}
